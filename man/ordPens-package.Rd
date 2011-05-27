@@ -13,8 +13,8 @@ a Group Lasso or generalized Ridge penalty.
 \tabular{ll}{
 Package: \tab ordPens\cr
 Type: \tab Package\cr
-Version: \tab 0.1-5\cr
-Date: \tab 2011-03-22\cr
+Version: \tab 0.1-6\cr
+Date: \tab 2011-05-27\cr
 Depends: \tab grplasso\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
@@ -30,18 +30,18 @@ Maintainer: Jan Gertheiss <jan.gertheiss@stat.uni-muenchen.de>
 }
 \references{
 Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
-predictors}. International Statistical Review, 77, 345 - 365.
+predictors}. International Statistical Review, 77, 345-365.
 
 Gertheiss, J., S. Hogger, C. Oberhauser and G. Tutz (2011). \emph{Selection
 of ordinally scaled independent variables with applications to international
 classification of functioning core sets}.
-Journal of the Royal Statistical Society C (Applied Statistics), to appear.
+Journal of the Royal Statistical Society C (Applied Statistics), 60, 377-395.
 
 Meier, L., S. van de Geer and P. Buehlmann (2008). \emph{The group lasso for 
-logistic regression}. Journal of the Royal Statistical Society B, 70, 53 - 71.
+logistic regression}. Journal of the Royal Statistical Society B, 70, 53-71.
 
 Yuan, M. and Y. Lin (2006). \emph{Model selection and estimation in regression 
-with grouped variables}. Journal of the Royal Statistical Society B, 68, 49 - 67.
+with grouped variables}. Journal of the Royal Statistical Society B, 68, 49-67.
 }
 
 \keyword{ package }

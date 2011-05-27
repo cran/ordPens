@@ -118,7 +118,7 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
           {
             stdu <- 1
           }   
-        u <- scale(u,center=FALSE,scale=stdu*nu)
+        u <- scale(u,center=FALSE,scale=stdu*sqrt(nu))
       }
     else
       {
@@ -151,7 +151,7 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
           {
             stdz <- 1
           }
-        z <- scale(z,center=FALSE,scale=stdz*zeta)
+        z <- scale(z,center=FALSE,scale=stdz*sqrt(zeta))
       }
 
 
@@ -180,18 +180,29 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
     if (intercept)
       {
         constant <- as.numeric(ridgemodel$coef[1,])
-        xc <- cbind(ridgemodel$coef[2:ncol(x),]/stdx)
+        if (ncol(x) > 2)
+          xc <- cbind(ridgemodel$coef[2:ncol(x),]/stdx)
+        else
+          xc <- rbind(ridgemodel$coef[2,]/stdx)
+          
         xgrp <- grp[1:(ncol(x)-1)]
       }
     else
       {
-        xc <- cbind(ridgemodel$coef[1:ncol(x),]/stdx)     
+        if (ncol(x) > 1)
+          xc <- cbind(ridgemodel$coef[1:ncol(x),]/stdx)  
+        else
+          xc <- rbind(ridgemodel$coef[1,]/stdx)
+        
         xgrp <- grp[1:ncol(x)] 
       }
     
     for (j in 1:max(xgrp))
       {
-        xc[xgrp==j,] <- apply(cbind(xc[xgrp==j,]),2,cumsum)
+        if (sum(xgrp==j) > 1)
+          xc[xgrp==j,] <- apply(cbind(xc[xgrp==j,]),2,cumsum)
+        else
+          xc[xgrp==j,] <- apply(rbind(xc[xgrp==j,]),2,cumsum)
       }
     if (length(xnames)==0)
       xnames <- paste("X",1:px,sep="")
@@ -204,7 +215,11 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
 
     if (length(u) > 0)
       {
-        uc <- cbind(ridgemodel$coef[ncol(x)+(1:ncol(u)),]/stdu)
+        if (ncol(u) > 1)
+          uc <- cbind(ridgemodel$coef[ncol(x)+(1:ncol(u)),]/(stdu*sqrt(nu)))
+        else
+          uc <- rbind(ridgemodel$coef[ncol(x)+1,]/(stdu*sqrt(nu)))
+        
         if (length(unames)==0)
           unames <- paste("U",1:pu,sep="")
 
@@ -222,7 +237,11 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
 
     if (length(z) > 0)
       {
-        zcoefs <- cbind(ridgemodel$coef[length(grp)+2-(ncol(z):1),]/stdz)
+        if (ncol(z) > 1)
+          zcoefs <- cbind(ridgemodel$coef[length(grp)+2-(ncol(z):1),]/(stdz*sqrt(zeta)))
+        else
+          zcoefs <- rbind(ridgemodel$coef[length(grp)+1,]/(stdz*sqrt(zeta)))
+          
         if (length(znames)==0)
           znames <- paste("Z",1:pz,sep="")
       }

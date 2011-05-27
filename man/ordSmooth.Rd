@@ -112,7 +112,7 @@ ordSmooth(x, ...)
 }
 \references{
 Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
-predictors}. International Statistical Review, 77, 345 - 365.
+predictors}. International Statistical Review, 77, 345-365.
 
 }
 \author{Jan Gertheiss, \email{jan.gertheiss@stat.uni-muenchen.de}}

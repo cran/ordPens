@@ -61,8 +61,8 @@ of Rehabilitation Medicine, Suppl. 44, 63-68.
 
 Gertheiss, J., S. Hogger, C. Oberhauser and G. Tutz (2011). \emph{Selection
 of ordinally scaled independent variables with applications to international
-classification of functioning core sets}.
-Journal of the Royal Statistical Society C (Applied Statistics), to appear.
+classification of functioning core sets}. Journal of the Royal Statistical 
+Society C (Applied Statistics), 60, 377-395.
 }
 
 \examples{

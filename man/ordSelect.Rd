@@ -104,12 +104,12 @@ ordSelect(x, ...)
 \references{
   Meier, L., S. van de Geer and P. Buehlmann (2008). \emph{The
   group lasso for logistic regression}. Journal of the Royal
-  Statistical Society B, 70, 53 - 71.
+  Statistical Society B, 70, 53-71.
   
   Gertheiss, J., S. Hogger, C. Oberhauser and G. Tutz (2011). \emph{Selection
   of ordinally scaled independent variables with applications to international
   classification of functioning core sets}.
-  Journal of the Royal Statistical Society C (Applied Statistics), to appear.
+  Journal of the Royal Statistical Society C (Applied Statistics), 60, 377-395.
  }
 
 \author{Jan Gertheiss, \email{jan.gertheiss@stat.uni-muenchen.de}}

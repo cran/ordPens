@@ -61,15 +61,15 @@ predict.ordPen <- function(object, newx, newu = NULL, newz = NULL,
           warning("newu not used")
         newcat <- rbind(object$xlevels,newx)
       }
-    xuz <- coding(newcat + 1, constant=TRUE, splitcod=FALSE)[-1,]
-    if (!is.null(newz))
+    xuz <- rbind(coding(newcat + 1, constant=TRUE, splitcod=FALSE)[-1,])
+    if (object$zcovars > 0)
       {
         if(!(is.matrix(newz) | is.numeric(newz) | is.data.frame(newz)))
           stop("newz has to be a matrix, numeric vector or data.frame")
         if(any(is.na(newz)))
           stop("Missing values in newz are not allowed")
      
-        newz <- as.matrix(newz)
+        newz <- rbind(as.matrix(newz))
         if(nrow(newz) != nrow(newx))
           stop("newz and newx do not have correct dimensions")
         if(any(!apply(newz,2,is.numeric)))
@@ -81,7 +81,8 @@ predict.ordPen <- function(object, newx, newu = NULL, newz = NULL,
       }
     else if (!is.null(newz))
       warning("newz not used")
-      
+    
+    rownames(xuz) <- rownames(newx)
     eta <- xuz%*%object$coef + matrix(rep(offset,ncol(object$coef)),
     nrow(xuz),ncol(object$coef))
     if (object$model == "linear" | TYPE == "link")

@@ -141,6 +141,7 @@ ordSelect.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
         if(any(!apply(z,2,is.numeric)))
           stop("Entries of z have to be of type 'numeric'")
         pz <- ncol(z)
+        znames <- colnames(z)
         grp <- c(grp,max(grp)+(1:pz))
         z <- z[!is.na(y),]
         if (scalez)
@@ -191,18 +192,29 @@ ordSelect.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
     if (intercept)
       {
         constant <- as.numeric(grpmodel$coef[1,])
-        xc <- cbind(grpmodel$coef[2:ncol(x),]/stdx)
+        if (ncol(x) > 2)
+          xc <- cbind(grpmodel$coef[2:ncol(x),]/stdx)
+        else
+          xc <- rbind(grpmodel$coef[2,]/stdx)
+          
         xgrp <- grp[1:(ncol(x)-1)]
       }
     else
       {
-        xc <- cbind(grpmodel$coef[1:ncol(x),]/stdx) 
+        if (ncol(x) > 1)
+          xc <- cbind(grpmodel$coef[1:ncol(x),]/stdx) 
+        else
+          xc <- rbind(grpmodel$coef[1,]/stdx)
+          
         xgrp <- grp[1:ncol(x)]     
       }
       
     for (j in 1:max(xgrp))
       {
-        xc[xgrp==j,] <- apply(cbind(xc[xgrp==j,]),2,cumsum)
+        if (sum(xgrp==j) > 1)
+          xc[xgrp==j,] <- apply(cbind(xc[xgrp==j,]),2,cumsum)
+        else
+          xc[xgrp==j,] <- apply(rbind(xc[xgrp==j,]),2,cumsum)
       }
     if (length(xnames)==0)
       xnames <- paste("X",1:px,sep="")
@@ -215,7 +227,11 @@ ordSelect.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
 
     if (length(u) > 0)
       {
-        uc <- cbind(grpmodel$coef[ncol(x)+(1:ncol(u)),]/(stdu*nu))
+        if (ncol(u) > 1)
+          uc <- cbind(grpmodel$coef[ncol(x)+(1:ncol(u)),]/(stdu*nu))
+        else
+          uc <- rbind(grpmodel$coef[ncol(x)+1,]/(stdu*nu))
+        
         if (length(unames)==0)
           unames <- paste("U",1:pu,sep="")
 
@@ -233,7 +249,11 @@ ordSelect.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
 
     if (length(z) > 0)
       {
-        zcoefs <- cbind(grpmodel$coef[length(grp)+2-(ncol(z):1),]/(stdz*zeta))
+        if (ncol(z) > 1)
+          zcoefs <- cbind(grpmodel$coef[length(grp)+2-(ncol(z):1),]/(stdz*zeta))
+        else
+          zcoefs <- rbind(grpmodel$coef[length(grp)+1,]/(stdz*zeta))
+ 
         if (length(znames)==0)
           znames <- paste("Z",1:pz,sep="")
       }
