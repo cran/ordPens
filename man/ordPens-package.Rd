@@ -13,8 +13,8 @@ a Group Lasso or generalized Ridge penalty.
 \tabular{ll}{
 Package: \tab ordPens\cr
 Type: \tab Package\cr
-Version: \tab 0.1-6\cr
-Date: \tab 2011-05-27\cr
+Version: \tab 0.1-7\cr
+Date: \tab 2011-10-28\cr
 Depends: \tab grplasso\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr

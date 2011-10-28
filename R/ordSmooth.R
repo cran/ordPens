@@ -49,7 +49,7 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
         stop("max(nonpenu) > ncol(u)")}
 
     if(!is.null(z) & !is.null(nonpenz)) 
-      {max(nonpenz) > ncol(as.matrix(z))
+      {if(max(nonpenz) > ncol(as.matrix(z)))
         stop("max(nonpenz) > ncol(z)")}
 
     if(is.null(u) & !is.null(nonpenu))
@@ -75,16 +75,33 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
     grp <- rep(1:px,kx-1)
     x <- coding(x, constant=intercept)
     x <- x[!is.na(y),]
-    if (scalex)
+    if (intercept)
       {
-        stdx <- sd(x)[-1]
-        stdx[stdx==0] <- 1 
+        if (scalex)
+          {
+            stdx <- apply(cbind(x),2,sd)[-1]
+            stdx[stdx==0] <- 1
+          }
+        else
+          {
+            stdx <- rep(1,ncol(cbind(x))-1)
+          }
         stdx <- stdx + eps
         x <- scale(x,center=FALSE,scale=c(1,stdx))
       }
     else
       {
-        stdx <- 1
+        if (scalex)
+          {
+            stdx <- apply(cbind(x),2,sd)
+            stdx[stdx==0] <- 1
+          }
+        else
+          {
+            stdx <- rep(1,ncol(cbind(x)))
+          }
+        stdx <- stdx + eps
+        x <- scale(x,center=FALSE,scale=stdx)
       }
 
     ## nominal predictors
@@ -101,7 +118,7 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
         if(any(!apply(u,2,is.numeric)))
           stop("Entries of u have to be of type 'numeric'")
         if(any(abs(u - round(u)) > tol) | any(u < 1))
-          stop("x has to contain positive integers")
+          stop("u has to contain positive integers")
         pu <- ncol(u)
         ku <- apply(u,2,max)
         unames <- colnames(u)
@@ -110,14 +127,14 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
         u <- u[!is.na(y),]
         if (scaleu)
           {
-            stdu <- sd(u) 
+            stdu <- apply(cbind(u),2,sd)
             stdu[stdu==0] <- 1
-            stdu <- stdu + eps
           }
         else
           {
-            stdu <- 1
+            stdu <- rep(1,ncol(cbind(u)))
           }   
+        stdu <- stdu + eps
         u <- scale(u,center=FALSE,scale=stdu*sqrt(nu))
       }
     else
@@ -145,11 +162,11 @@ ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
         z <- z[!is.na(y),]
         if (scalez)
           {
-            stdz <- sd(z)
+            stdz <- apply(cbind(z),2,sd)
           }
         else
           {
-            stdz <- 1
+            stdz <- rep(1,ncol(cbind(z)))
           }
         z <- scale(z,center=FALSE,scale=stdz*sqrt(zeta))
       }

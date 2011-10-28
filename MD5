@@ -1,0 +1,15 @@
+4ad90be33cf92e0ef5052ed544481d73 *DESCRIPTION
+e1511f5d3f3e1d226ab87a6eda61e803 *NAMESPACE
+95369a1931dca9905ff2b1bfe193c083 *R/ordPens-internal.R
+13eac813410b68dd23ce6eebb1a5e8f7 *R/ordSelect.R
+6e57a8cd102e7dab6e0aa96ebd359519 *R/ordSmooth.R
+d6e42c1a24895eb04654c049ef5b5afd *R/plot.ordPen.R
+42b74c9c79754a3d814185541529086f *R/predict.ordPen.R
+149a8143339d295d4071aa468f5d940c *data/ICFCoreSetCWP.RData
+d73bba10b8c6793c57925849bdc2db6e *man/ICFCoreSetCWP.Rd
+19268a6ab2d487521835ebbb87082a6b *man/ordPens-internal.Rd
+21983f096ae8c2105546e2b9b84fb1ed *man/ordPens-package.Rd
+ef5562531c35380528330dfce8a67c75 *man/ordSelect.Rd
+e8667c6296f683c811b6412b66c1980d *man/ordSmooth.Rd
+116ed67f085d50fb6ea52f1efa0029f3 *man/plot.ordPen.Rd
+015fddd3a1cfa9555e4e94b06804de09 *man/predict.ordPen.Rd
