@@ -11,9 +11,9 @@ xlab = NULL, ylab = NULL, main = NULL, xlim = NULL, ylim = NULL, col = NULL, ...
       stop("incorrect whichlam")
 
     if (rownames(x$coef)[1] == "intercept")
-      xcoefs <- x$coef[2:(length(xgrp)+1),whichlam]
+      xcoefs <- x$coef[2:(length(xgrp)+1),whichlam,drop=FALSE]
     else
-      xcoefs <- x$coef[1:length(xgrp),whichlam]
+      xcoefs <- x$coef[1:length(xgrp),whichlam,drop=FALSE]
 
     if (is.null(whichx))
       whichx <- 1:px
@@ -48,7 +48,7 @@ xlab = NULL, ylab = NULL, main = NULL, xlim = NULL, ylim = NULL, col = NULL, ...
     devAskNewPage(length(whichx)>1)
     for (wx in whichx)
       {
-        xlam <- xcoefs[xgrp==wx,]
+        xlam <- xcoefs[xgrp==wx, ,drop=FALSE]
         
         if (noylims)
           ylim <- c(min(xlam),max(xlam))

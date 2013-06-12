@@ -7,46 +7,45 @@ Selection and/or Smoothing of Ordinal Predictors
 }
 \description{
 Selection and/or smoothing of ordinally scaled independent variables using 
-a Group Lasso or generalized Ridge penalty.
+a group lasso or generalized ridge penalty.
 }
 \details{
 \tabular{ll}{
 Package: \tab ordPens\cr
 Type: \tab Package\cr
-Version: \tab 0.1-7\cr
-Date: \tab 2011-10-28\cr
-Depends: \tab grplasso\cr
+Version: \tab 0.2-1\cr
+Date: \tab 2013-06-12\cr
+Depends: \tab grplasso, mgcv, RLRsim\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }
 
 Smoothing and selection of ordinal predictors is done by the function 
-\code{\link{ordSelect}}; smoothing only, by \code{\link{ordSmooth}}.
+\code{\link{ordSelect}}; smoothing only, by \code{\link{ordSmooth}}. For
+ANOVA with ordinal factors, use \code{\link{ordAOV}}.
 }
 \author{
 Jan Gertheiss
 
-Maintainer: Jan Gertheiss <jan.gertheiss@stat.uni-muenchen.de>
+Maintainer: Jan Gertheiss, \email{jgerthe@uni-goettingen.de}
 }
 \references{
-Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
-predictors}. International Statistical Review, 77, 345-365.
-
 Gertheiss, J., S. Hogger, C. Oberhauser and G. Tutz (2011). \emph{Selection
 of ordinally scaled independent variables with applications to international
 classification of functioning core sets}.
 Journal of the Royal Statistical Society C (Applied Statistics), 60, 377-395.
 
-Meier, L., S. van de Geer and P. Buehlmann (2008). \emph{The group lasso for 
-logistic regression}. Journal of the Royal Statistical Society B, 70, 53-71.
+Gertheiss, J. and F. Oehrlein (2011). \emph{Testing Relevance and Linearity of
+Ordinal Predictors}, Electronic Journal of Statistics, 5, 1935-1959.
 
-Yuan, M. and Y. Lin (2006). \emph{Model selection and estimation in regression 
-with grouped variables}. Journal of the Royal Statistical Society B, 68, 49-67.
+Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
+predictors}. International Statistical Review, 77, 345-365.
 }
 
 \keyword{ package }
 
-\seealso{\code{\link{ordSelect}}, \code{\link{ordSmooth}}}
+\seealso{\code{\link{ordSelect}}, \code{\link{ordSmooth}},
+\code{\link{ordAOV}}}
 
 
 \examples{

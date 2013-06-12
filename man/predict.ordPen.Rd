@@ -34,6 +34,8 @@
   the penalty parameter \code{lambda} of the \code{ordPen} object.
 }
 
+\author{Jan Gertheiss}
+
 \seealso{\code{\link{ordSelect}}, \code{\link{ordSmooth}}}
 
 \examples{

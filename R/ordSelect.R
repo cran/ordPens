@@ -19,7 +19,7 @@ ordSelect.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)
 
     ## Check the response
     if(!is.numeric(y))
-      stop("y has to be of type 'numeric'")
+      stop("y has to be numeric")
             
     if(model == "logit" & any(!is.element(y[!is.na(y)], c(0,1))))
       stop("y has to be 0/1 coded")

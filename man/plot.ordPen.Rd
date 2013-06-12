@@ -43,6 +43,8 @@
   The function simply generates plots.
 }
 
+\author{Jan Gertheiss}
+
 \seealso{\code{\link{ordSelect}}, \code{\link{ordSmooth}}}
 
 \examples{

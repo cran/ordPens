@@ -95,7 +95,7 @@ genRidge <- function(x, y, offset, omega, lambda, model, delta=1e-6, maxit=25)
                     sigma <- as.numeric(mu)
                   }
                 score <- t(x)%*%(y-mu)
-                fisher <- t(x)%*%diag(sigma)%*%x
+                fisher <- t(x)%*%(x*sigma)
                 choli <- chol(fisher + lam*omega)
                 b.new <- b.old + backsolve(choli,
                 backsolve(choli, (score - lam*omega%*%b.old), transpose=TRUE))
@@ -120,3 +120,256 @@ genRidge <- function(x, y, offset, omega, lambda, model, delta=1e-6, maxit=25)
     
     return(list(fitted = fits, coefficients = coefs))   
   }
+
+
+
+cd <- function(x)
+  {
+    n <- length(x)
+
+    X <- matrix(1,n,1)
+
+    Z <- matrix(rep(x,max(x)-1),n,max(x)-1)
+    Z <- Z - matrix(rep(1:(max(x)-1),n),dim(Z)[1],dim(Z)[2],byrow=T)
+    Z[Z<0] <- 0
+    Z[Z>1] <- 1
+
+    res <- list(X = X, Z = Z)
+    return(res)
+  }
+
+
+
+ordAOV1 <- function(x, y, type = "RLRT", nsim = 10000, ...){
+
+  x <- as.numeric(x)
+
+  ## check x
+  if(min(x)!=1 | length(unique(x)) != max(x))
+    stop("x has to contain levels 1,...,max")
+    
+  if(length(x) != length(y))
+    stop("x and y have to be of the same length")
+
+  k <- length(unique(x))
+  cdx <- cd(x)
+  X <- cdx$X
+  Z <- cdx$Z
+
+  # RLRT
+  if (type == "RLRT")
+  {
+  # model under the alternative
+  m <- gam(y ~ Z, paraPen=list(Z=list(diag(k-1))), method="REML")
+
+  # null model
+  m0 <- gam(y ~ 1, method="REML")
+
+  # log-likelihood
+  rlogLik.m <- -summary(m)$sp.criterion
+  rlogLik.m0 <- -summary(m0)$sp.criterion
+  rlrt.obs <- max(0, 2*(rlogLik.m - rlogLik.m0))
+
+  # null distribution
+  if (rlrt.obs != 0) {
+      RLRTsample <- RLRTSim(X, Z, qr(cdx$X), chol(diag(k-1)), nsim = nsim, ...)
+      p <- mean(rlrt.obs < RLRTsample)
+    }
+  else
+    {
+      RLRTsample <- NULL
+      p <- 1
+    }
+
+  # return
+  RVAL <- list(statistic = c(RLRT = rlrt.obs), p.value = p,
+        method = paste("simulated finite sample distribution of RLRT.\n (p-value based on",
+        nsim, "simulated values)"), sample = RLRTsample)
+  }
+
+  # LRT
+  else
+  {
+  # model under the alternative
+  m <- gam(y ~ Z, paraPen=list(Z=list(diag(k-1))), method="ML")
+
+  # null model
+  m0 <- gam(y ~ 1, method="ML")
+
+  # log-likelihood
+  logLik.m <- -summary(m)$sp.criterion
+  logLik.m0 <- -summary(m0)$sp.criterion
+  lrt.obs <- max(0, 2*(logLik.m - logLik.m0))
+
+  # null distribution
+  if (lrt.obs != 0) {
+      LRTsample <- LRTSim(X, Z, q=0, chol(diag(k-1)), nsim = nsim, ...)
+      p <- mean(lrt.obs < LRTsample)
+    }
+  else
+    {
+      LRTsample <- NULL
+      p <- 1
+    }
+
+  # return
+  RVAL <- list(statistic = c(LRT = lrt.obs), p.value = p,
+        method = paste("simulated finite sample distribution of LRT.\n (p-value based on",
+        nsim, "simulated values)"), sample = LRTsample)
+  }
+
+  class(RVAL) <- "htest"
+  return(RVAL)
+}
+
+
+
+ordAOV2 <- function(x, y, type = "RLRT", nsim = 10000, ...){
+
+  n <- length(y)
+  p <- ncol(x)
+  k <- apply(x, 2, max)
+
+  ## check x
+  if(min(x[,1])!=1 | length(unique(x[,1])) != max(x[,1]))
+    stop("x has to contain levels 1,...,max")
+
+  if(nrow(x) != length(y))
+    stop("nrow(x) and length(y) do not match")
+
+  cdx <- cd(x[,1])
+  X <- cdx$X
+  ZZ <- vector("list", p)
+  ZZ[[1]] <- cdx$Z
+  Z <- ZZ[[1]]
+  DD <- vector("list", p)
+  DD[[1]] <- diag(c(rep(1,k[1]-1),rep(0,sum(k[2:p]-1))))
+  for (j in 2:p)
+    {
+
+      ## check x
+      if(min(x[,j])!=1 | length(unique(x[,j])) != max(x[,j]))
+        stop("x has to contain levels 1,...,max")
+
+      ZZ[[j]] <- cd(x[,j])$Z
+      Z <- cbind(Z,ZZ[[j]])
+      if (j < p)
+        DD[[j]] <- diag(c(rep(0,sum(k[1:(j-1)]-1)),rep(1,k[j]-1),rep(0,sum(k[(j+1):p]-1))))
+      else
+        DD[[j]] <- diag(c(rep(0,sum(k[1:(j-1)]-1)),rep(1,k[j]-1)))
+    }
+  RRVAL <- vector("list", p)
+
+  # RLRT
+  if (type == "RLRT")
+  {
+  # model under the alternative
+  mA <- gam(y ~ Z, paraPen=list(Z=DD), method="REML")
+
+  for (j in 1:p)
+  {
+  # null model
+  Z0 <- matrix(unlist(ZZ[-j]),n,sum(k[-j]-1))
+  D0 <- DD[-j]
+  if(!is.list(D0))
+    D0 <- list(D0)
+
+  if (j == 1)
+    out <- 1:(k[1]-1)
+  else
+    out <- sum(k[1:(j-1)]-1)+(1:(k[j]-1))
+
+  for(j0 in 1:length(D0))
+    {
+      D0[[j0]] <- D0[[j0]][-out,-out]
+    }
+  m0 <- gam(y ~ Z0, paraPen=list(Z0=D0), method="REML")
+
+  # log-likelihood
+  rlogLik.mA <- -summary(mA)$sp.criterion
+  rlogLik.m0 <- -summary(m0)$sp.criterion
+  rlrt.obs <- max(0, 2*(rlogLik.mA - rlogLik.m0))
+
+  # model that only contains the variance
+  # ...
+
+  # null distribution
+  Z1 <- ZZ[[j]]
+  if (rlrt.obs != 0) {
+      RLRTsample <- RLRTSim(X, Z1, qr(X), chol(diag(k[j]-1)), nsim = nsim, ...)
+      p <- mean(rlrt.obs < RLRTsample)
+    }
+  else
+    {
+      RLRTsample <- NULL
+      p <- 1
+    }
+
+  # return
+  RVAL <- list(statistic = c(RLRT = rlrt.obs), p.value = p,
+        method = paste("simulated finite sample distribution of RLRT.\n (p-value based on",
+        nsim, "simulated values)"), sample = RLRTsample)
+
+  class(RVAL) <- "htest"
+  RRVAL[[j]] <- RVAL
+  }
+  }
+
+  # LRT
+  else
+  {
+  # model under the alternative
+  mA <- gam(y ~ Z, paraPen=list(Z=DD), method="ML")
+
+  for (j in 1:p)
+  {
+  # null model
+  Z0 <- matrix(unlist(ZZ[-j]),n,sum(k[-j]-1))
+  D0 <- DD[-j]
+  if(!is.list(D0))
+    D0 <- list(D0)
+
+  if (j == 1)
+    out <- 1:(k[1]-1)
+  else
+    out <- sum(k[1:(j-1)]-1)+(1:(k[j]-1))
+
+  for(j0 in 1:length(D0))
+    {
+      D0[[j0]] <- D0[[j0]][-out,-out]
+    }
+  m0 <- gam(y ~ Z0, paraPen=list(Z0=D0), method="ML")
+
+  # log-likelihood
+  logLik.mA <- -summary(mA)$sp.criterion
+  logLik.m0 <- -summary(m0)$sp.criterion
+  lrt.obs <- max(0, 2*(logLik.mA - logLik.m0))
+
+  # model that only contains the variance
+  # ...
+
+  # null distribution
+  Z1 <- ZZ[[j]]
+  if (lrt.obs != 0) {
+      LRTsample <- LRTSim(X, Z1, q=0, chol(diag(k[j]-1)), nsim = nsim, ...)
+      p <- mean(lrt.obs < LRTsample)
+    }
+  else
+    {
+      LRTsample <- NULL
+      p <- 1
+    }
+
+  # return
+  RVAL <- list(statistic = c(LRT = lrt.obs), p.value = p,
+        method = paste("simulated finite sample distribution of LRT.\n (p-value based on",
+        nsim, "simulated values)"), sample = LRTsample)
+
+  class(RVAL) <- "htest"
+  RRVAL[[j]] <- RVAL
+  }
+  }
+
+  names(RRVAL) <- colnames(x)
+  return(RRVAL)
+}

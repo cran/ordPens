@@ -106,17 +106,16 @@ ordSmooth(x, ...)
     different lambda values.}
   \item{model}{the type of the fitted model: "linear", "logit", or "poisson".}
   \item{lambda}{the used lambda values.}
-  \item{xlevels}{a vector given the number of levels of the ordinal predictors.}
-  \item{ulevels}{a vector given the number of levels of the nominal predictors.}
+  \item{xlevels}{a vector giving the number of levels of the ordinal predictors.}
+  \item{ulevels}{a vector giving the number of levels of the nominal predictors.}
   \item{zcovars}{the number of metric covariates.}
 }
 \references{
 Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
 predictors}. International Statistical Review, 77, 345-365.
-
 }
-\author{Jan Gertheiss, \email{jan.gertheiss@stat.uni-muenchen.de}}
 
+\author{Jan Gertheiss}
 
 \seealso{\code{\link{plot.ordPen}}, \code{\link{predict.ordPen}}}
 

@@ -97,23 +97,25 @@ ordSelect(x, ...)
     different lambda values.}
   \item{model}{the type of the fitted model: "linear", "logit", or "poisson".}
   \item{lambda}{the used lambda values.}
-  \item{xlevels}{a vector given the number of levels of the ordinal predictors.}
-  \item{ulevels}{a vector given the number of levels of the nominal predictors.}
+  \item{xlevels}{a vector giving the number of levels of the ordinal predictors.}
+  \item{ulevels}{a vector giving the number of levels of the nominal predictors.}
   \item{zcovars}{the number of metric covariates.}
 }
 \references{
-  Meier, L., S. van de Geer and P. Buehlmann (2008). \emph{The
-  group lasso for logistic regression}. Journal of the Royal
-  Statistical Society B, 70, 53-71.
-  
   Gertheiss, J., S. Hogger, C. Oberhauser and G. Tutz (2011). \emph{Selection
   of ordinally scaled independent variables with applications to international
   classification of functioning core sets}.
   Journal of the Royal Statistical Society C (Applied Statistics), 60, 377-395.
+  
+  Meier, L., S. van de Geer and P. Buehlmann (2008). \emph{The
+  group lasso for logistic regression}. Journal of the Royal
+  Statistical Society B, 70, 53-71.
+
+  Yuan, M. and Y. Lin (2006). \emph{Model selection and estimation in regression
+  with grouped variables}. Journal of the Royal Statistical Society B, 68, 49-67.
  }
 
-\author{Jan Gertheiss, \email{jan.gertheiss@stat.uni-muenchen.de}}
-
+\author{Jan Gertheiss}
 
 \seealso{\code{\link{plot.ordPen}}, \code{\link{predict.ordPen}}, 
 \code{\link{ICFCoreSetCWP}}}
