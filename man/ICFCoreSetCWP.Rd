@@ -1,6 +1,6 @@
 \name{ICFCoreSetCWP}
 \alias{ICFCoreSetCWP}
-\title{ICF Core Set for Chronic Widespread Pain}
+\title{ICF core set for chronic widespread pain}
 \description{The data set contains observed levels of ICF categories from
 the (comprehensive) ICF Core Set for chronic wide spread pain (CWP) and a
 physical health component summary measure for n = 420 patients.}

@@ -10,8 +10,8 @@
 cd(x)
 coding(x, constant=TRUE, splitcod=TRUE)
 genRidge(x, y, offset, omega, lambda, model, delta=1e-6, maxit=25)
-ordAOV1(x, y, type, nsim, ...)
-ordAOV2(x, y, type, nsim, ...)
+ordAOV1(x, y, type, nsim, null.sample, ...)
+ordAOV2(x, y, type, nsim, null.sample, ...)
 }
 \author{Jan Gertheiss}
 \details{

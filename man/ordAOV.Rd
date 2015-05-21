@@ -1,15 +1,13 @@
 \name{ordAOV}
 \alias{ordAOV}
-\alias{ordAOV.default}
 \title{ANOVA for factors with ordered levels}
 \description{This function performs analysis of variance when the
 factor(s) of interest has/have ordinal scale level. For testing, values from
 the null distribution are simulated.}
 
 \usage{
-ordAOV(x, ...)
-
-\method{ordAOV}{default}(x, y, type = c("RLRT", "LRT"), nsim = 10000, ...)
+ordAOV(x, y, type = c("RLRT", "LRT"), nsim = 10000,
+null.sample = NULL, ...)
 }
 \arguments{
   \item{x}{a vector or matrix of integers 1,2,... giving the observed levels
@@ -19,6 +17,9 @@ ordAOV(x, ...)
   \item{type}{the type of test to carry out: likelihood ratio ("LRT") or
   restricted likelihood ratio ("RLRT").}
   \item{nsim}{number of values to simulate from the null distribution.}
+  \item{null.sample}{a vector, or a list of vectors (in case of multi-factorial
+  ANOVA) containing values already simulated from the null distribution
+  (overrides \code{nsim})}
   \item{...}{additional arguments to \code{\link{LRTSim}} and
   \code{\link{RLRTSim}}, respectively.}
 }
@@ -42,7 +43,7 @@ and it is simulated from the exact finite sample null distribution as derived by
 Crainiceanu & Ruppert (2004). If \code{x} is a matrix, multi-factorial ANOVA
 (with main effects only) is done, and the approximation of the finite sample null
 distribution proposed by Greven et al. (2008) is used. Simulation
-studies by Gertheiss (2013) suggest that for ANOVA with ordinal factors RLRT
+studies by Gertheiss (2014) suggest that for ANOVA with ordinal factors RLRT
 should rather be used than LRT.
 }
 
@@ -66,11 +67,11 @@ Crainiceanu, C. and D. Ruppert (2004). \emph{Likelihood ratio tests in linear
 mixed models with one variance component}, Journal of the Royal Statistical
 Society B, 66, 165-185.
 
-Gertheiss, J. (2013). \emph{ANOVA for Factors with Ordered Levels}, Preprint.
-(available on request)
+Gertheiss, J. (2014). \emph{ANOVA for factors with ordered levels}, Journal of
+Agricultural, Biological and Environmental Statistics, 19, 258-277.
 
-Gertheiss, J. and F. Oehrlein (2011). \emph{Testing Relevance and Linearity of
-Ordinal Predictors}, Electronic Journal of Statistics, 5, 1935-1959.
+Gertheiss, J. and F. Oehrlein (2011). \emph{Testing relevance and linearity of
+ordinal predictors}, Electronic Journal of Statistics, 5, 1935-1959.
 
 Greven, S., C. Crainiceanu, H. Kuechenhoff, and A. Peters (2008). \emph{Restricted
 likelihood ratio testing for zero variance components in linear mixed models},

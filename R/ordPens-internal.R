@@ -140,7 +140,7 @@ cd <- function(x)
 
 
 
-ordAOV1 <- function(x, y, type = "RLRT", nsim = 10000, ...){
+ordAOV1 <- function(x, y, type = "RLRT", nsim = 10000, null.sample = NULL ,...){
 
   x <- as.numeric(x)
 
@@ -172,19 +172,27 @@ ordAOV1 <- function(x, y, type = "RLRT", nsim = 10000, ...){
 
   # null distribution
   if (rlrt.obs != 0) {
-      RLRTsample <- RLRTSim(X, Z, qr(cdx$X), chol(diag(k-1)), nsim = nsim, ...)
+      if (length(null.sample)==0)
+        RLRTsample <- RLRTSim(X, Z, qr(cdx$X), chol(diag(k-1)), nsim = nsim, ...)
+      else
+        RLRTsample <- null.sample
+        
       p <- mean(rlrt.obs < RLRTsample)
     }
   else
     {
-      RLRTsample <- NULL
+      if (length(null.sample)==0)
+        RLRTsample <- NULL
+      else
+        RLRTsample <- null.sample
+
       p <- 1
     }
 
   # return
   RVAL <- list(statistic = c(RLRT = rlrt.obs), p.value = p,
         method = paste("simulated finite sample distribution of RLRT.\n (p-value based on",
-        nsim, "simulated values)"), sample = RLRTsample)
+        length(RLRTsample), "simulated values)"), sample = RLRTsample)
   }
 
   # LRT
@@ -203,19 +211,27 @@ ordAOV1 <- function(x, y, type = "RLRT", nsim = 10000, ...){
 
   # null distribution
   if (lrt.obs != 0) {
-      LRTsample <- LRTSim(X, Z, q=0, chol(diag(k-1)), nsim = nsim, ...)
+      if (length(null.sample)==0)
+        LRTsample <- LRTSim(X, Z, q=0, chol(diag(k-1)), nsim = nsim, ...)
+      else
+        LRTsample <- null.sample
+        
       p <- mean(lrt.obs < LRTsample)
     }
   else
     {
-      LRTsample <- NULL
+      if (length(null.sample)==0)
+        LRTsample <- NULL
+      else
+        LRTsample <- null.sample
+
       p <- 1
     }
 
   # return
   RVAL <- list(statistic = c(LRT = lrt.obs), p.value = p,
         method = paste("simulated finite sample distribution of LRT.\n (p-value based on",
-        nsim, "simulated values)"), sample = LRTsample)
+        length(LRTsample), "simulated values)"), sample = LRTsample)
   }
 
   class(RVAL) <- "htest"
@@ -224,7 +240,7 @@ ordAOV1 <- function(x, y, type = "RLRT", nsim = 10000, ...){
 
 
 
-ordAOV2 <- function(x, y, type = "RLRT", nsim = 10000, ...){
+ordAOV2 <- function(x, y, type = "RLRT", nsim = 10000, null.sample = NULL, ...){
 
   n <- length(y)
   p <- ncol(x)
@@ -296,19 +312,37 @@ ordAOV2 <- function(x, y, type = "RLRT", nsim = 10000, ...){
   # null distribution
   Z1 <- ZZ[[j]]
   if (rlrt.obs != 0) {
-      RLRTsample <- RLRTSim(X, Z1, qr(X), chol(diag(k[j]-1)), nsim = nsim, ...)
+      if (length(null.sample) == 0)
+        RLRTsample <- RLRTSim(X, Z1, qr(X), chol(diag(k[j]-1)), nsim = nsim, ...)
+      else
+        {
+          if (length(null.sample) == p)
+            RLRTsample <- null.sample[[j]]
+          else
+            stop("wrong number of null.sample elements")
+        }
+
       p <- mean(rlrt.obs < RLRTsample)
     }
   else
     {
-      RLRTsample <- NULL
+      if (length(null.sample) == 0)
+        RLRTsample <- NULL
+      else
+        {
+          if (length(null.sample) == p)
+            RLRTsample <- null.sample[[j]]
+          else
+            stop("wrong number of null.sample elements")
+        }
+
       p <- 1
     }
 
   # return
   RVAL <- list(statistic = c(RLRT = rlrt.obs), p.value = p,
         method = paste("simulated finite sample distribution of RLRT.\n (p-value based on",
-        nsim, "simulated values)"), sample = RLRTsample)
+        length(RLRTsample), "simulated values)"), sample = RLRTsample)
 
   class(RVAL) <- "htest"
   RRVAL[[j]] <- RVAL
@@ -351,19 +385,37 @@ ordAOV2 <- function(x, y, type = "RLRT", nsim = 10000, ...){
   # null distribution
   Z1 <- ZZ[[j]]
   if (lrt.obs != 0) {
+      if (length(null.sample) == 0)
       LRTsample <- LRTSim(X, Z1, q=0, chol(diag(k[j]-1)), nsim = nsim, ...)
+      else
+        {
+          if (length(null.sample) == p)
+            LRTsample <- null.sample[[j]]
+          else
+            stop("wrong number of null.sample elements")
+        }
+
       p <- mean(lrt.obs < LRTsample)
     }
   else
     {
-      LRTsample <- NULL
+      if (length(null.sample) == 0)
+        LRTsample <- NULL
+      else
+        {
+          if (length(null.sample) == p)
+            LRTsample <- null.sample[[j]]
+          else
+            stop("wrong number of null.sample elements")
+        }
+
       p <- 1
     }
 
   # return
   RVAL <- list(statistic = c(LRT = lrt.obs), p.value = p,
         method = paste("simulated finite sample distribution of LRT.\n (p-value based on",
-        nsim, "simulated values)"), sample = LRTsample)
+        length(LRTsample), "simulated values)"), sample = LRTsample)
 
   class(RVAL) <- "htest"
   RRVAL[[j]] <- RVAL

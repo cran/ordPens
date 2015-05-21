@@ -1,7 +1,4 @@
-ordSelect <- function(x, ...)
-  UseMethod("ordSelect")
-
-ordSelect.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), 
+ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), 
   lambda, nu = 1, zeta = 1, model = c("linear", "logit", "poisson"), penscale = sqrt,  
   scalex = TRUE, scalez = TRUE, scaleu = TRUE, nonpenx = NULL, nonpenz = NULL, 
   nonpenu = NULL, intercept = TRUE, eps = 1e-3, ...)

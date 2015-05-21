@@ -1,14 +1,11 @@
 \name{ordSmooth}
 \alias{ordSmooth}
-\alias{ordSmooth.default}
 \title{Smoothing dummy coefficients of ordinal predictors}
 \description{Fits dummy coefficients of ordinally scaled independent variables
 with the sum of squared differences of adjacent dummy coefficients being penalized.}
 
 \usage{
-ordSmooth(x, ...)
-
-\method{ordSmooth}{default}(x, y, u = NULL, z = NULL,
+ordSmooth(x, y, u = NULL, z = NULL,
   offset = rep(0,length(y)), lambda, nu = 1, zeta = 1, 
   model = c("linear", "logit", "poisson"), penscale = identity, 
   scalex = TRUE, scalez = TRUE, scaleu = TRUE,

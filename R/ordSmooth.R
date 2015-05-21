@@ -1,7 +1,4 @@
-ordSmooth <- function(x, ...)
-  UseMethod("ordSmooth")
-
-ordSmooth.default <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), 
+ordSmooth <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), 
   lambda, nu = 1, zeta = 1, model = c("linear", "logit", "poisson"), penscale = identity,  
   scalex = TRUE, scalez = TRUE, scaleu = TRUE, nonpenx = NULL, nonpenz = NULL, 
   nonpenu = NULL, intercept = TRUE, eps = 1e-3, delta = 1e-6, maxit = 25, ...)

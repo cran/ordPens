@@ -1,5 +1,9 @@
-# Export
 exportPattern(".")
 
-# Import
 import(grplasso)
+import(mgcv)
+import(RLRsim)
+import(tcltk)
+
+S3method(plot, ordPen)
+S3method(predict, ordPen)

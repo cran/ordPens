@@ -1,7 +1,5 @@
-ordAOV <- function(x, ...)
-  UseMethod("ordAOV")
-
-ordAOV.default <- function(x, y, type = c("RLRT", "LRT"), nsim = 10000, ...){
+ordAOV <- function(x, y, type = c("RLRT", "LRT"), nsim = 10000,
+null.sample = NULL, ...){
 
   type <- match.arg(type)
   type <- switch(type, RLRT="RLRT", LRT="LRT")
@@ -25,9 +23,11 @@ ordAOV.default <- function(x, y, type = c("RLRT", "LRT"), nsim = 10000, ...){
 
   # one-factorial anova
   if (ncol(cbind(x)) == 1)
-    ordAOV1(x = x, y = y, type = type, nsim = nsim, ...)
+    ordAOV1(x = x, y = y, type = type, nsim = nsim, null.sample = null.sample,
+    ...)
   
   # multi-factorial anova (main effects only)
   else
-    ordAOV2(x = x, y = y, type = type, nsim = nsim, ...)
+    ordAOV2(x = x, y = y, type = type, nsim = nsim, null.sample = null.sample,
+    ...)
 }

@@ -1,14 +1,11 @@
 \name{ordSelect}
 \alias{ordSelect}
-\alias{ordSelect.default}
 \title{Selection and smoothing of dummy coefficients of ordinal predictors}
 \description{Fits dummy coefficients of ordinally scaled independent variables
 with a group lasso penalty on differences of adjacent dummy coefficients.}
 
 \usage{
-ordSelect(x, ...)
-
-\method{ordSelect}{default}(x, y, u = NULL, z = NULL, 
+ordSelect(x, y, u = NULL, z = NULL, 
   offset = rep(0,length(y)), lambda, nu = 1, zeta = 1,  
   model = c("linear", "logit", "poisson"), penscale = sqrt, 
   scalex = TRUE, scalez = TRUE, scaleu = TRUE,

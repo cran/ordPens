@@ -3,7 +3,7 @@
 \alias{ordPens}
 \docType{package}
 \title{
-Selection and/or Smoothing of Ordinal Predictors
+Selection and/or smoothing of ordinal predictors
 }
 \description{
 Selection and/or smoothing of ordinally scaled independent variables using 
@@ -13,9 +13,10 @@ a group lasso or generalized ridge penalty.
 \tabular{ll}{
 Package: \tab ordPens\cr
 Type: \tab Package\cr
-Version: \tab 0.2-1\cr
-Date: \tab 2013-06-12\cr
-Depends: \tab grplasso, mgcv, RLRsim\cr
+Version: \tab 0.3-1\cr
+Date: \tab 2015-05-21\cr
+Depends: \tab grplasso, mgcv, RLRsim, tcltk\cr
+Suggests: \tab IsoGene, Biobase\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }
@@ -30,13 +31,16 @@ Jan Gertheiss
 Maintainer: Jan Gertheiss, \email{jgerthe@uni-goettingen.de}
 }
 \references{
+Gertheiss, J. (2014). \emph{ANOVA for factors with ordered levels}, Journal of
+Agricultural, Biological and Environmental Statistics, 19, 258-277.
+
 Gertheiss, J., S. Hogger, C. Oberhauser and G. Tutz (2011). \emph{Selection
 of ordinally scaled independent variables with applications to international
 classification of functioning core sets}.
 Journal of the Royal Statistical Society C (Applied Statistics), 60, 377-395.
 
-Gertheiss, J. and F. Oehrlein (2011). \emph{Testing Relevance and Linearity of
-Ordinal Predictors}, Electronic Journal of Statistics, 5, 1935-1959.
+Gertheiss, J. and F. Oehrlein (2011). \emph{Testing relevance and linearity of
+ordinal predictors}, Electronic Journal of Statistics, 5, 1935-1959.
 
 Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
 predictors}. International Statistical Review, 77, 345-365.
