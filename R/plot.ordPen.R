@@ -1,25 +1,25 @@
-plot.ordPen <- function(x, whichlam = NULL, whichx = NULL, type = NULL,
+plot.ordPen <- function(x, whl = NULL, whx = NULL, type = NULL,
 xlab = NULL, ylab = NULL, main = NULL, xlim = NULL, ylim = NULL, col = NULL, ...)
   {
     px <- length(x$xlevels)
     xgrp <- rep(1:px,x$xlevels)
     tol <- .Machine$double.eps^0.5
-    if (is.null(whichlam))
-      whichlam <- 1:ncol(x$coef)
-    else if (!is.numeric(whichlam) | max(whichlam) > ncol(x$coef) |
-    any(abs(whichlam - round(whichlam)) > tol))
-      stop("incorrect whichlam")
+    if (is.null(whl))
+      whl <- 1:ncol(x$coef)
+    else if (!is.numeric(whl) | max(whl) > ncol(x$coef) |
+    any(abs(whl - round(whl)) > tol))
+      stop("incorrect whl")
 
     if (rownames(x$coef)[1] == "intercept")
-      xcoefs <- x$coef[2:(length(xgrp)+1),whichlam,drop=FALSE]
+      xcoefs <- x$coef[2:(length(xgrp)+1),whl,drop=FALSE]
     else
-      xcoefs <- x$coef[1:length(xgrp),whichlam,drop=FALSE]
+      xcoefs <- x$coef[1:length(xgrp),whl,drop=FALSE]
 
-    if (is.null(whichx))
-      whichx <- 1:px
-    else if (!is.numeric(whichx) | max(whichx) > px |
-    any(abs(whichx - round(whichx)) > tol))
-      stop("incorrect whichx")
+    if (is.null(whx))
+      whx <- 1:px
+    else if (!is.numeric(whx) | max(whx) > px |
+    any(abs(whx - round(whx)) > tol))
+      stop("incorrect whx")
 
     if (is.null(xlab))
       xlab <- "level"
@@ -36,17 +36,17 @@ xlab = NULL, ylab = NULL, main = NULL, xlim = NULL, ylim = NULL, col = NULL, ...
     multcol <- length(col) > 1
       
     if (nocol)
-      cols <- grey(seq(0,0.7,length=length(whichlam)))
+      cols <- grey(seq(0,0.7,length=length(whl)))
     else if (multcol)
       {
-        if (length(col) != length(whichlam))
+        if (length(col) != length(whl))
           stop("incorrect length(col)")
         else
           cols <- col
       }
       
-    devAskNewPage(length(whichx)>1)
-    for (wx in whichx)
+    devAskNewPage(length(whx)>1)
+    for (wx in whx)
       {
         xlam <- xcoefs[xgrp==wx, ,drop=FALSE]
         

@@ -1,5 +1,5 @@
 ordGene <- function(xpr, lvs, type = c("RLRT", "LRT"), nsim = 1e6,
-null.sample = NULL, progressBar = TRUE, ...){
+null.sample = NULL, ...){
 
   type <- match.arg(type)
   type <- switch(type, RLRT="RLRT", LRT="LRT")
@@ -30,10 +30,7 @@ null.sample = NULL, progressBar = TRUE, ...){
   pRLRT <- numeric(n)
   pANOVA <- numeric(n)
   pttest <- numeric(n)
-  if (progressBar == TRUE) 
-    {
-      pb <- tkProgressBar(title = "progress bar", min = 0, max = n, width = 300)
-    }
+
 
   for (j in 1:n)
     {
@@ -41,15 +38,10 @@ null.sample = NULL, progressBar = TRUE, ...){
       pRLRT[j] <- ordAOV(x,y, type=type, null.sample=RLRTnull, ...)$p.value
       pANOVA[j] <- anova(lm(y ~ factor(x)))$"Pr(>F)"[1]
       pttest[j] <- anova(lm(y ~ x))$"Pr(>F)"[1]
-      if (progressBar == TRUE) 
-        {
-          setTkProgressBar(pb, j, title = paste(round(j/n * 100, 0), "% done"))
-        }
+
     }
 
-  if (progressBar == TRUE) 
-    close(pb)
-    
+
   pvals <- cbind(pRLRT,pANOVA,pttest)
   rownames(pvals) <- row.names(xpr)
   if (type=="RLRT")

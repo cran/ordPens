@@ -425,3 +425,238 @@ ordAOV2 <- function(x, y, type = "RLRT", nsim = 10000, null.sample = NULL, ...){
   names(RRVAL) <- colnames(x)
   return(RRVAL)
 }
+
+
+
+## Defines a new type of "spline basis" for ordered factors
+## with difference penalty:
+
+#' smooth constructor:
+smooth.construct.ordinal.smooth.spec <- 
+  function(object, data, knots){
+    x <- data[[object$term]]
+    ## stop if co is not an ordered factor:
+    stopifnot(is.ordered(x))
+    
+    nlvls <- nlevels(x)
+    
+    #default to 1st order differences (penalizations of deviations from constant):
+    if(is.na(object$p.order)) object$p.order <- 1
+    
+    # construct difference penalty
+    Diffmat <- diag(nlvls)
+    if(object$p.order > 0){
+      for(d in 1:object$p.order) Diffmat <- diff(Diffmat)
+    } 
+    object$S[[1]] <- crossprod(Diffmat)
+    
+    # construct design matrix
+    object$X <- model.matrix(~ x - 1)
+    object$rank <- c(nlvls - object$p.order)
+    object$null.space.dim <- object$p.order
+    object$knots <- levels(x) 
+    object$df <- nlvls
+    
+    class(object) <- "ordinal.smooth"
+    object
+  }
+#' for predictions:
+Predict.matrix.ordinal.smooth <- 
+  function(object,data){
+    x <- ordered(data[[object$term]], levels = object$knots)
+    X <- model.matrix(~ x - 1)
+  }
+
+#' for plots:
+plot.ordinal.smooth <- 
+  function(x,P=NULL,data=NULL,label="",se1.mult=1,se2.mult=2,
+           partial.resids=FALSE,rug=TRUE,se=TRUE,scale=-1,n=100,n2=40,n3=3,
+           pers=FALSE,theta=30,phi=30,jit=FALSE,xlab=NULL,ylab=NULL,main=NULL,
+           ylim=NULL,xlim=NULL,too.far=0.1,shade=FALSE,shade.col="gray80",
+           shift=0,trans=I,by.resids=FALSE,scheme=0,...) {
+    if (is.null(P)) { ## get plotting info
+      xx <- unique(data[x$term])  
+      dat <- data.frame(xx)
+      names(dat) <- x$term
+      X <- PredictMat(x, dat)
+      
+      if (is.null(xlab)) xlabel <- x$term else xlabel <- xlab
+      if (is.null(ylab)) ylabel <- label else ylabel <- ylab
+      return(list(X=X,scale=FALSE,se=TRUE, xlab=xlabel,ylab=ylabel,
+                  raw = data[x$term], 
+                  main="",x=xx,n=n, se.mult=se1.mult))
+    } else { ## produce the plot
+      n <- length(P$fit)
+      if (se) { ## produce CI's
+        if (scheme == 1) shade <- TRUE
+        ul <- P$fit + P$se ## upper CL
+        ll <- P$fit - P$se ## lower CL
+        if (scale==0 && is.null(ylim)) { ## get scale 
+          ylimit <- c(min(ll), max(ul))
+          if (partial.resids) { 
+            max.r <- max(P$p.resid,na.rm=TRUE)
+            if (max.r> ylimit[2]) ylimit[2] <- max.r
+            min.r <-  min(P$p.resid,na.rm=TRUE)
+            if (min.r < ylimit[1]) ylimit[1] <- min.r
+          }
+        }
+        if (!is.null(ylim)) ylimit <- ylim
+        if (length(ylimit)==0) ylimit <- range(ul,ll)
+        ## plot the smooth...
+        plot(P$x, trans(P$fit+shift),  
+             xlab=P$xlab, ylim=trans(ylimit+shift),
+             xlim=P$xlim, ylab=P$ylab, main=P$main, ...)
+        if (shade) { 
+          rect(xleft=as.numeric(P$x[[1]])-.4, 
+               xright=as.numeric(P$x[[1]])+.4, 
+               ybottom=trans(ll+shift), 
+               ytop=trans(ul+shift), col = shade.col,border = NA)
+          segments(x0=as.numeric(P$x[[1]])-.4, 
+                   x1=as.numeric(P$x[[1]])+.4, 
+                   y0=trans(P$fit+shift), 
+                   y1=trans(P$fit+shift), lwd=3)
+        } else { ## ordinary plot 
+          if (is.null(list(...)[["lty"]])) { 
+            segments(x0=as.numeric(P$x[[1]]), 
+                     x1=as.numeric(P$x[[1]]), 
+                     y0=trans(ul+shift), 
+                     y1=trans(ll+shift), lty=2,...)
+          } else { 
+            segments(x0=as.numeric(P$x[[1]]), 
+                     x1=as.numeric(P$x[[1]]), 
+                     y0=trans(ul+shift), 
+                     y1=trans(ll+shift),...)
+            segments(x0=as.numeric(P$x[[1]]), 
+                     x1=as.numeric(P$x[[1]]), 
+                     y0=trans(ul+shift), 
+                     y1=trans(ll+shift),...)
+          }
+        }
+      }  else {
+        if (!is.null(ylim)) ylimit <- ylim
+        if (is.null(ylimit)) ylimit <- range(P$fit) 
+        ## plot the smooth... 
+        plot(P$x, trans(P$fit+shift),  
+             xlab=P$xlab, ylim=trans(ylimit+shift),
+             xlim=P$xlim, ylab=P$ylab, main=P$main, ...)
+      }    ## ... smooth plotted
+      if (partial.resids&&(by.resids||x$by=="NA")) { ## add any partial residuals
+        if (length(P$raw)==length(P$p.resid)) {
+          if (is.null(list(...)[["pch"]]))
+            points(P$raw,trans(P$p.resid+shift),pch=".",...) else
+              points(P$raw,trans(P$p.resid+shift),...) 
+        } else {
+          warning("Partial residuals not working.")
+        }
+      } ## partial residuals finished 
+      
+    }
+  } 
+
+
+crO <- function(k, d=2){
+  
+  Dd <- cbind(diag(-1,k-1),0) + cbind(0,diag(1,k-1))
+  if (d > 1)
+  {
+    Dj <- Dd
+    for (j in 2:d) {
+      Dj <- Dj[-1,-1]
+      Dd <- Dj%*%Dd
+    }
+  }
+  
+  Om <- t(Dd)%*%Dd
+  return(Om)
+}
+
+
+penALS <- function(H, p, lambda, qstart, crit, maxit, Ks, constr){
+  
+  Q <- as.matrix(H) 
+  n <- nrow(Q)     
+  m <- ncol(Q)      
+  
+  qs <- list()
+  Z <- list()
+  ZZO <- list()
+  iZZO <- list()
+  
+  tracing <- c()
+  
+  for (j in 1:m) 
+  { 
+    qj <- c(Q[,j],1:Ks[j])                          
+    Z[[j]] <- model.matrix(~ factor(qj) - 1)[1:n,] 
+    Om <- (Ks[j]-1)*crO(Ks[j])                      
+    ZZO[[j]] <- (t(Z[[j]])%*%Z[[j]] + lambda*Om)   
+    iZZO[[j]] <- chol2inv(chol(ZZO[[j]]))          
+    qs[[j]] <- ((1:Ks[j]) - mean(Q[,j]))/sd(Q[,j]) 
+  }
+  
+  if(length(qstart) > 0){
+    Qstart <- mapply("%*%", Z, qstart, SIMPLIFY = TRUE)
+    Q <- scale(Qstart)
+    qs <- qstart
+  }else{
+    Q <- scale(Q) 
+  }
+  
+  iter <- 0
+  conv <- FALSE
+  QQ <- Q
+  while(!conv & iter < maxit)
+  {
+    
+    pca <- prcomp(Q, scale = FALSE)  
+    X <- pca$x[,1:p, drop = FALSE]        
+    A <- pca$rotation[,1:p, drop = FALSE]  
+    
+    for (j in 1:m){
+      
+      if (constr[j]){ 
+        bvec <- c(n-1,numeric(Ks[j]-1)) 
+        dvec <- t(Z[[j]])%*%(X%*%A[j,]) 
+        Amat2 <- qs[[j]] %*% t(Z[[j]]) %*% Z[[j]]
+        Amat3 <- cbind(0,diag(Ks[j]-1)) - cbind(diag(Ks[j]-1),0)
+        Amat <- rbind( Amat2, Amat3)  
+        Amat <- t(Amat) 
+      }else{
+        bvec <- c(n-1)   
+        dvec <- t(Z[[j]])%*%(X%*%A[j,]) 
+        Amat2 <- qs[[j]] %*% t(Z[[j]]) %*% Z[[j]]
+        Amat <- rbind( Amat2)  
+        Amat <- t(Amat)
+      }
+
+      qj <- solve.QP(Dmat=ZZO[[j]], dvec=dvec, Amat=Amat, bvec=bvec, meq=1)$solution
+      
+      qj <- as.numeric(qj)
+      Zqj <- Z[[j]]%*%qj
+      Q[,j] <- Zqj/sd(Zqj)
+      qs[[j]] <- qj/sd(Zqj)   
+      
+    }
+    
+    tracing <- c(tracing, sum(pca$sdev[1:p]^2) / sum(pca$sdev^2))
+    
+    # convergence?
+    if (sum((QQ - Q)^2)/(n*m) < crit)
+      conv <- TRUE
+    
+    QQ <- Q
+    iter <- iter + 1
+  }
+  
+  # final pca
+  pca <- prcomp(Q, scale = FALSE)  
+  X <- pca$x[,1:p, drop = FALSE]  
+  A <- pca$rotation[,1:p, drop = FALSE]  
+  
+  tracing[length(tracing)] <- sum(pca$sdev[1:p]^2) / sum(pca$sdev^2)
+  
+  return(list("Q" = Q, "qs" = qs, "iter" = iter, "trace" = tracing))
+}
+
+
+

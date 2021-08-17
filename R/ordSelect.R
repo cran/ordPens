@@ -1,7 +1,6 @@
 ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), 
-  lambda, nu = 1, zeta = 1, model = c("linear", "logit", "poisson"), penscale = sqrt,  
-  scalex = TRUE, scalez = TRUE, scaleu = TRUE, nonpenx = NULL, nonpenz = NULL, 
-  nonpenu = NULL, intercept = TRUE, eps = 1e-3, ...)
+  lambda, model = c("linear", "logit", "poisson"), penscale = sqrt,  
+  scalex = TRUE, nonpenx = NULL, eps = 1e-3, ...)
   {
     model <- match.arg(model)
     model <- switch(model, linear="linear", logit="logit", poisson="poisson")
@@ -31,33 +30,14 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
     if(length(offset) != length(y))
       stop("length(offset) not equal length(y)")  
     
-    if(length(nu) != 1)
-      stop("nu must have length 1")
-      
-    if(length(zeta) != 1)
-      stop("zeta must have length 1")
-
     if(!is.null(nonpenx))
       {if(max(nonpenx) > ncol(as.matrix(x)))
         stop("max(nonpenx) > ncol(x)")}
       
-    if(!is.null(u) & !is.null(nonpenu)) 
-      {if(max(nonpenu) > ncol(as.matrix(u))) 
-        stop("max(nonpenu) > ncol(u)")}
-
-    if(!is.null(z) & !is.null(nonpenz)) 
-      {if(max(nonpenz) > ncol(as.matrix(z)))
-        stop("max(nonpenz) > ncol(z)")}
-
-    if(is.null(u) & !is.null(nonpenu))
-      warning("nonpenu not used")
-      
-    if(is.null(z) & !is.null(nonpenz))
-      warning("nonpenz not used")
-      
     if(is.unsorted(rev(lambda)))
       warning("lambda values should be sorted in decreasing order")
 
+    lmbd <- sort(lambda, decreasing = TRUE)
 
     ## ordinal predictors
     x <- as.matrix(x)
@@ -71,37 +51,20 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
     kx <- apply(x,2,max)
     xnames <- colnames(x)
     grp <- rep(1:px,kx-1)
-    x <- coding(x, constant=intercept)
+    x <- coding(x, constant=TRUE)
     x <- x[!is.na(y),]
     
-    if (intercept)
+    if (scalex)
       {
-        if (scalex)
-          {
-            stdx <- apply(cbind(x),2,sd)[-1]
-            stdx[stdx==0] <- 1
-          }
-        else
-          {
-            stdx <- rep(1,ncol(cbind(x))-1)
-          }
+        stdx <- apply(cbind(x),2,sd)[-1]
+        stdx[stdx==0] <- 1
         stdx <- stdx + eps
-        x <- scale(x,center=FALSE,scale=c(1,stdx))
       }
     else
       {
-        if (scalex)
-          {
-            stdx <- apply(cbind(x),2,sd)
-            stdx[stdx==0] <- 1
-          }
-        else
-          {
-            stdx <- rep(1,ncol(cbind(x)))
-          }
-        stdx <- stdx + eps
-        x <- scale(x,center=FALSE,scale=stdx)
+        stdx <- rep(1,ncol(cbind(x))-1)
       }
+    x <- scale(x,center=FALSE,scale=c(1,stdx))
 
     ## nominal predictors
     if (length(u) > 0)
@@ -124,21 +87,12 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
         grp <- c(grp,rep(max(grp)+(1:pu),ku-1))
         u <- coding(u, constant=FALSE, splitcod=FALSE)
         u <- u[!is.na(y),]
-        if (scaleu)
-          {
-            stdu <- apply(cbind(u),2,sd)
-            stdu[stdu==0] <- 1
-          }
-        else
-          {
-            stdu <- rep(1,ncol(cbind(u)))
-          }   
-        stdu <- stdu + eps
-        u <- scale(u,center=FALSE,scale=stdu*nu)
+        nonpenu <- 1:pu
       }
     else
       {
         pu <- NULL
+        nonpenu <- NULL
         ku <- NULL
       }
 
@@ -159,17 +113,13 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
         znames <- colnames(z)
         grp <- c(grp,max(grp)+(1:pz))
         z <- z[!is.na(y),]
-        if (scalez)
-          {
-            stdz <- apply(cbind(z),2,sd)
-          }
-        else
-          {
-            stdz <- rep(1,ncol(cbind(z)))
-          }
-        z <- scale(z,center=FALSE,scale=stdz*zeta)
+        nonpenz <- 1:pz
       }
-
+    else
+    {
+      pz <- NULL
+      nonpenz <- NULL
+    }
 
     xuz <- cbind(x,u,z)
     offset <- offset[!is.na(y)]
@@ -182,48 +132,33 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
       {
         grp2[is.element(grp,nonpen)] <- NA
       }
-    if (intercept)
-      {
-        grp2 <- c(NA,grp2)
-      }
-    
+    grp2 <- c(NA,grp2)
+
     if (model == "linear")
       {
-        grpmodel <- grplasso(x=xuz,y=y,index=grp2,offset=offset,lambda=lambda,
+        grpmodel <- grplasso(x=xuz,y=y,index=grp2,offset=offset,lambda=lmbd,
         model=LinReg(),penscale=penscale,standardize=FALSE)
       }
     else if (model == "logit")
       {
-        grpmodel <- grplasso(x=xuz,y=y,index=grp2,offset=offset,lambda=lambda,
+        grpmodel <- grplasso(x=xuz,y=y,index=grp2,offset=offset,lambda=lmbd,
         model=LogReg(),penscale=penscale,standardize=FALSE)      
       }
     else
       {
-        grpmodel <- grplasso(x=xuz,y=y,index=grp2,offset=offset,lambda=lambda,
+        grpmodel <- grplasso(x=xuz,y=y,index=grp2,offset=offset,lambda=lmbd,
         model=PoissReg(),penscale=penscale,standardize=FALSE)
       }
       
     ## fitted coefficients
-    if (intercept)
-      {
-        constant <- as.numeric(grpmodel$coef[1,])
-        if (ncol(x) > 2)
-          xc <- cbind(grpmodel$coef[2:ncol(x),]/stdx)
-        else
-          xc <- rbind(grpmodel$coef[2,]/stdx)
-          
-        xgrp <- grp[1:(ncol(x)-1)]
-      }
+    constant <- as.numeric(grpmodel$coef[1,])
+    if (ncol(x) > 2)
+      xc <- cbind(grpmodel$coef[2:ncol(x),]/stdx)
     else
-      {
-        if (ncol(x) > 1)
-          xc <- cbind(grpmodel$coef[1:ncol(x),]/stdx) 
-        else
-          xc <- rbind(grpmodel$coef[1,]/stdx)
+      xc <- rbind(grpmodel$coef[2,]/stdx)
           
-        xgrp <- grp[1:ncol(x)]     
-      }
-      
+    xgrp <- grp[1:(ncol(x)-1)]
+
     for (j in 1:max(xgrp))
       {
         if (sum(xgrp==j) > 1)
@@ -232,7 +167,7 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
           xc[xgrp==j,] <- apply(rbind(xc[xgrp==j,]),2,cumsum)
       }
     if (length(xnames)==0)
-      xnames <- paste("X",1:px,sep="")
+      xnames <- paste("x",1:px,sep="")
 
     xnames <- rep(xnames,kx)
     xnames <- paste(xnames,":",sequence(kx),sep="")
@@ -243,12 +178,12 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
     if (length(u) > 0)
       {
         if (ncol(u) > 1)
-          uc <- cbind(grpmodel$coef[ncol(x)+(1:ncol(u)),]/(stdu*nu))
+          uc <- cbind(grpmodel$coef[ncol(x)+(1:ncol(u)),])
         else
-          uc <- rbind(grpmodel$coef[ncol(x)+1,]/(stdu*nu))
+          uc <- rbind(grpmodel$coef[ncol(x)+1,])
         
         if (length(unames)==0)
-          unames <- paste("U",1:pu,sep="")
+          unames <- paste("u",1:pu,sep="")
 
         unames <- rep(unames,ku)
         unames <- paste(unames,":",sequence(ku),sep="")
@@ -265,12 +200,12 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
     if (length(z) > 0)
       {
         if (ncol(z) > 1)
-          zcoefs <- cbind(grpmodel$coef[length(grp)+2-(ncol(z):1),]/(stdz*zeta))
+          zcoefs <- cbind(grpmodel$coef[length(grp)+2-(ncol(z):1),])
         else
-          zcoefs <- rbind(grpmodel$coef[length(grp)+1,]/(stdz*zeta))
+          zcoefs <- rbind(grpmodel$coef[length(grp)+1,])
  
         if (length(znames)==0)
-          znames <- paste("Z",1:pz,sep="")
+          znames <- paste("z",1:pz,sep="")
       }
     else
       {
@@ -278,26 +213,18 @@ ordSelect <- function(x, y, u = NULL, z = NULL, offset = rep(0,length(y)),
         znames <- NULL
       }
 
-    if (intercept)
-      {
-        coefs <- rbind(constant,xcoefs,ucoefs,zcoefs)
-        rownames(coefs) <- c("intercept",xnames,unames,znames)
-      }
-    else
-      {
-        coefs <- rbind(xcoefs,ucoefs,zcoefs)
-        rownames(coefs) <- c(xnames,unames,znames)      
-      }
-    colnames(coefs) <- lambda
+    coefs <- rbind(constant,xcoefs,ucoefs,zcoefs)
+    rownames(coefs) <- c("intercept",xnames,unames,znames)
+    colnames(coefs) <- lmbd
     fits <- grpmodel$fitted
-    colnames(fits) <- lambda
+    colnames(fits) <- lmbd
     rownames(fits) <- NULL
 
     ## output
     out <- list(fitted = fits,
                 coefficients = coefs,
                 model = model,
-                lambda = lambda,                
+                lambda = lmbd,
                 xlevels = kx,
                 ulevels = ku,
                 zcovars = length(znames))

@@ -2,7 +2,7 @@
 \alias{ICFCoreSetCWP}
 \title{ICF core set for chronic widespread pain}
 \description{The data set contains observed levels of ICF categories from
-the (comprehensive) ICF Core Set for chronic wide spread pain (CWP) and a
+the (comprehensive) ICF Core Set for chronic widespread pain (CWP) and a
 physical health component summary measure for n = 420 patients.}
 
 \usage{
@@ -12,7 +12,7 @@ data(ICFCoreSetCWP)
 \format{
 The data frame has 420 rows and 68 columns. The first 67 columns
 contain observed levels of ICF categories from the (comprehensive) ICF Core Set
-for chronic wide spread pain (CWP). In the last column, the physical health
+for chronic widespread pain (CWP). In the last column, the physical health
 component summary measure is given. Each row corresponds to one patient
 with CWP. ICF categories have discrete ordinal values between 0 and 4
 (columns 1 - 50 and 67), or between -4 and 4 (columns 51 - 66). See the given
@@ -96,7 +96,7 @@ plot(modelICF)
 
 # plot a selected ICF category (e.g. e1101 'drugs')
 # with adequate class labels
-plot(modelICF, whichx = 51, xaxt = "n")
+plot(modelICF, whx = 51, xaxt = "n")
 axis(side = 1, at = 1:9, labels = -4:4)
 }
 

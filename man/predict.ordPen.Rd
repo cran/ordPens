@@ -23,11 +23,11 @@
     additional metric predictors, with each column corresponding to one
     (additional) predictor.}
   \item{offset}{potential offset values.}
-  \item{type}{the type of prediction. \code{type = "link"} is on the
+  \item{type}{the type of prediction; \code{type = "link"} is on the
     scale of linear predictors, whereas \code{type = "response"} is on
-    the scale of the response variable, i.e. \code{type = "response"}
+    the scale of the response variable, i.e., \code{type = "response"}
     applies the inverse link function to the linear predictors.}
-  \item{...}{additional arguments.}
+  \item{...}{additional arguments (not supported at this time).}
 }
 \value{
   A matrix of predictions whose columns correspond to the different values of
@@ -36,7 +36,7 @@
 
 \author{Jan Gertheiss}
 
-\seealso{\code{\link{ordSelect}}, \code{\link{ordSmooth}}}
+\seealso{\code{\link{ordSelect}}, \code{\link{ordSmooth}}, \code{\link{ordFusion}}}
 
 \examples{
 # the training data
@@ -56,9 +56,10 @@ x <- cbind(x1,x2,x3)
 # lambda values
 lambda <- c(1000,500,200,100,50,30,20,10,1)
 
-# selecting and/or smoothing
+# selecting and/or smoothing/fusing
 o1 <- ordSmooth(x = x, y = y, lambda = lambda)
 o2 <- ordSelect(x = x, y = y, lambda = lambda)
+o3 <- ordFusion(x = x, y = y, lambda = lambda)
 
 # new data
 x1 <- sample(1:8,10,replace=TRUE)
@@ -69,6 +70,7 @@ newx <- cbind(x1,x2,x3)
 # prediction
 round(predict(o1, newx), digits=3)
 round(predict(o2, newx), digits=3)
+round(predict(o3, newx), digits=3)
 }
 
 \keyword{methods}

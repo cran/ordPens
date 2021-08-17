@@ -7,18 +7,18 @@
   of ordinal predictors for different \code{lambda} values.
 }
 \usage{
-\method{plot}{ordPen}(x, whichlam = NULL, whichx = NULL, 
+\method{plot}{ordPen}(x, whl = NULL, whx = NULL, 
   type = NULL, xlab = NULL, ylab = NULL, main = NULL, 
   xlim = NULL, ylim = NULL, col = NULL, ...)
 }
 
 \arguments{
   \item{x}{an \code{ordPen} object.}
-  \item{whichlam}{a vector of indices of \code{lambda} values corresponding
+  \item{whl}{a vector of indices of \code{lambda} values corresponding
     to \code{object$lambda} for which plotting is done; if \code{NULL}, all
     values from \code{object$lambda} are considered.}
-  \item{whichx}{a vector of indices indicating the ordinal predictors whose
-    dummy coefficients are plotted; e.g., set \code{whichx=2}, if you just want 
+  \item{whx}{a vector of indices indicating the ordinal predictors whose
+    dummy coefficients are plotted; e.g., set \code{whx=2}, if you just want 
     the plot for the second smooth term.}
   \item{type}{1-character string giving the type of plot desired, see
   \code{\link{plot.default}}.}
@@ -33,9 +33,7 @@
   \item{ylim}{the y limits; if supplied then this pair of numbers are used
     as the y limits for each plot.}
   \item{col}{the plotting color; can be a vector of the same length as
-    \code{whichlam} specifying different colors for different \code{lambda}
-    values. Default is shades of gray: the higher \code{lambda}
-    the darker.}
+    \code{whl} specifying different colors for different \code{lambda} values. Default is shades of gray: the higher \code{lambda} the darker.}
   \item{...}{additional graphical parameters (see \code{\link{plot.default}},
     or  \code{\link{par}}).}
 }
@@ -45,7 +43,7 @@
 
 \author{Jan Gertheiss}
 
-\seealso{\code{\link{ordSelect}}, \code{\link{ordSmooth}}}
+\seealso{\code{\link{ordFusion}}, \code{\link{ordSelect}}, \code{\link{ordSmooth}}}
 
 \examples{
 # see for example
