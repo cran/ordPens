@@ -12,7 +12,7 @@
 
 <meta name="author" content="Aisouda Hoshiyar" />
 
-<meta name="date" content="2023-10-10" />
+<meta name="date" content="2023-06-29" />
 
 <title>Introduction to ordPens</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Introduction to ordPens</h1>
 <h4 class="author">Aisouda Hoshiyar</h4>
-<h4 class="date">2023-10-10</h4>
+<h4 class="date">2023-06-29</h4>
 
 
 
@@ -166,8 +166,8 @@ text-align: justify}
 <div id="fusion-smoothing-and-selection" class="section level2">
 <h2>Fusion, smoothing and selection</h2>
 <p>These functions fit penalized dummy coefficients of ordinally scaled independent variables. The covariates are assumed to take values 1,2,…,max, where max denotes the (columnwise) highest level observed in the data. The <code>ordSmooth()</code> function penalizes <strong>the sum of squared</strong> differences of adjacent dummy coefficients, while <code>ordSelect()</code> uses a <strong>group lasso</strong> penalty on differences of adjacent dummies and <code>ordFusion()</code> proceeds with a <strong>fused lasso</strong> penalty on differences of adjacent dummy coefficients <strong>using the glmpath algorithm</strong>. For details on the different penalties used, please see also Tutz and Gertheiss (2014, 2016).</p>
-<p><code>ordPens</code> extends penalization to the wider framework of generalized linear models, thus allowing for binary, ordinal or Poisson distributed responses as well as the classical Gaussian model.<br />
-The response vector <code>y</code> can be either of numeric scale (leading to the default <code>model = &quot;linear&quot;</code>), 0/1 coded (<code>model = &quot;logit&quot;</code>), ordinal (<code>model = &quot;cumulative&quot;</code>) or contain count data (i.e. <code>model = &quot;poisson&quot;</code>).</p>
+<p><code>ordPens</code> extends penalization to the wider framework of generalized linear models, thus allowing for binary or Poisson distributed responses as well as the classical Gaussian model.<br />
+The response vector <code>y</code> can be either of numeric scale (leading to the default <code>model = &quot;linear&quot;</code>), 0/1 coded (<code>model = &quot;logit&quot;</code>) or contain count data (i.e. <code>model = &quot;poisson&quot;</code>).</p>
 <div id="smoothing" class="section level3">
 <h3>Smoothing</h3>
 <p>For smoothing only, the generalized linear model is fitted via penalized maximum likelihood. In particular, the logit or poisson model is fitted by penalized Fisher scoring. For stopping the iterations the criterion <span class="math inline">\(\sqrt(\sum((b.new-b.old)^2)/\sum(b.old^2)) &lt; \delta\)</span> is used.</p>
@@ -361,41 +361,34 @@ Top: <code>ordSmooth</code>; middle row: gam with first-order penalty; bottom: g
 <p>Each ICF factor is associated with one of the following four types: ‘body functions’, ‘body structures’, ‘activities and participation’, and ‘environmental factors’. The latter are measured on a nine-point Likert scale ranging from −4 ‘complete barrier’ to +4 ‘complete facilitator’. All remaining factors are evaluated on a five-point Likert scale ranging from 0 ‘no problem’ to 4 ‘complete problem’. Type <code>?ICFCoreSetCWP</code> and see also references therein for further details.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(ICFCoreSetCWP)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ICFCoreSetCWP)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b1602 b122 b126 b130 b134 b140 b147 b152 b164 b180 b260 b265 b270 b280 b430</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     0    1    2    1    1    0    0    2    0    0    0    0    0    1    0</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     3    2    2    3    3    2    3    3    3    1    2    2    2    2    0</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     0    1    2    1    1    0    1    2    0    0    0    0    0    1    0</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     0    0    0    2    1    0    0    0    0    0    0    0    0    3    0</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     0    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7     0    1    0    2    3    3    2    3    2    2    0    0    3    3    0</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b455 b640 b710 b730 b735 b740 b760 b780 d160 d175 d220 d230 d240 d410 d415</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    1    0    0    1    0    0    0    1    0    0    1    0    1    0    0</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3    0    2    3    3    3    3    3    3    2    3    3    3    3    3</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1    0    0    1    0    1    0    1    0    0    0    1    1    0    0</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    3    0    0    0    0    3    0    1    0    0    0    1    0    0    2</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    0    1    0    0    0    0    0    0    0    0    0    0    0    0    0</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    3    2    0    3    3    3    0    2    2    2    3    2    0    3    3</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   d430 d450 d455 d470 d475 d510 d540 d570 d620 d640 d650 d660 d720 d760 d770</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    1    0    2    0    1    0    0    0    1    0    0    0    0    0    0</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3    3    3    3    0    2    2    3    3    3    3    3    3    3    0</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1    0    2    0    1    0    0    0    0    0    0    0    0    0    0</span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    2    3    2    0    0    0    0    0    0    1    0    0    0    0    0</span></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    3    1    3    1    3    1    1    1    1    3    2    0    1    0    3</span></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   d845 d850 d855 d910 d920 e1101 e310 e325 e355 e410 e420 e425 e430 e450 e455</span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    0    0    0    0    1     0    0    0    4    0    0    0    0    4    0</span></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    0    0    2    2    2     2    3    2    3    3    3    3    3    3    3</span></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0    0    0    0    1     0    0    0    4    0    0    0    0    4    0</span></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0    0    0    0    0     0    2    1    2    0   -1   -1    0    2    2</span></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    0    0    0    0    0     0    1    0    1    0    0    0    0    1    0</span></span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    2    2    0    0    2     3    3    3    3    3    2    1   -1    2    2</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   e460 e465 e570 e575 e580 e590 s770  phcs</span></span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    0    0    3    3    4    3    0 44.33</span></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    2    2    2    2    2    2    2 21.09</span></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0    0    3    3    4    0    0 41.74</span></span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   -1    0    0    2    2    1    1 33.96</span></span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    0    0    0    0    0    0    0 46.29</span></span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   -2   -2    1    1    1    1    1 29.89</span></span></code></pre></div>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b1602 b122 b126 b130 b134 b140 b147 b152 b164 b180 b260 b265 b270 b280 b430 b455 b640 b710 b730</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     0    1    2    1    1    0    0    2    0    0    0    0    0    1    0    1    0    0    1</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     3    2    2    3    3    2    3    3    3    1    2    2    2    2    0    3    0    2    3</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     0    1    2    1    1    0    1    2    0    0    0    0    0    1    0    1    0    0    1</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     0    0    0    2    1    0    0    0    0    0    0    0    0    3    0    3    0    0    0</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    1    0    0</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7     0    1    0    2    3    3    2    3    2    2    0    0    3    3    0    3    2    0    3</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b735 b740 b760 b780 d160 d175 d220 d230 d240 d410 d415 d430 d450 d455 d470 d475 d510 d540 d570</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    0    0    0    1    0    0    1    0    1    0    0    1    0    2    0    1    0    0    0</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3    3    3    3    3    2    3    3    3    3    3    3    3    3    3    0    2    2    3</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0    1    0    1    0    0    0    1    1    0    0    1    0    2    0    1    0    0    0</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0    3    0    1    0    0    0    1    0    0    2    2    3    2    0    0    0    0    0</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    3    3    0    2    2    2    3    2    0    3    3    3    1    3    1    3    1    1    1</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   d620 d640 d650 d660 d720 d760 d770 d845 d850 d855 d910 d920 e1101 e310 e325 e355 e410 e420 e425</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    1    0    0    0    0    0    0    0    0    0    0    1     0    0    0    4    0    0    0</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3    3    3    3    3    3    0    0    0    2    2    2     2    3    2    3    3    3    3</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0    0    0    0    0    0    0    0    0    0    0    1     0    0    0    4    0    0    0</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0    1    0    0    0    0    0    0    0    0    0    0     0    2    1    2    0   -1   -1</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    0    0    0    0    0    0    0    0    0    0    0    0     0    1    0    1    0    0    0</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    1    3    2    0    1    0    3    2    2    0    0    2     3    3    3    3    3    2    1</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   e430 e450 e455 e460 e465 e570 e575 e580 e590 s770  phcs</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    0    4    0    0    0    3    3    4    3    0 44.33</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3    3    3    2    2    2    2    2    2    2 21.09</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    0    4    0    0    0    3    3    4    0    0 41.74</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0    2    2   -1    0    0    2    2    1    1 33.96</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    0    1    0    0    0    0    0    0    0    0 46.29</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   -1    2    2   -2   -2    1    1    1    1    1 29.89</span></span></code></pre></div>
 <p>Before estimation, we make sure that the ordinal design matrix is coded adequately:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> ICFCoreSetCWP<span class="sc">$</span>phcs</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> ICFCoreSetCWP[, <span class="dv">1</span><span class="sc">:</span><span class="dv">67</span>] <span class="sc">+</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">50</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">16</span>), <span class="dv">1</span>),</span>
@@ -403,58 +396,48 @@ Top: <code>ordSmooth</code>; middle row: gam with first-order penalty; bottom: g
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>xnames <span class="ot">&lt;-</span> <span class="fu">names</span>(x)</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(x)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b1602 b122 b126 b130 b134 b140 b147 b152 b164 b180 b260 b265 b270 b280 b430</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     1    2    3    2    2    1    1    3    1    1    1    1    1    2    1</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     4    3    3    4    4    3    4    4    4    2    3    3    3    3    1</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     1    2    3    2    2    1    2    3    1    1    1    1    1    2    1</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     1    1    1    3    2    1    1    1    1    1    1    1    1    4    1</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     1    1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7     1    2    1    3    4    4    3    4    3    3    1    1    4    4    1</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b455 b640 b710 b730 b735 b740 b760 b780 d160 d175 d220 d230 d240 d410 d415</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2    1    1    2    1    1    1    2    1    1    2    1    2    1    1</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    4    1    3    4    4    4    4    4    4    3    4    4    4    4    4</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    2    1    1    2    1    2    1    2    1    1    1    2    2    1    1</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    4    1    1    1    1    4    1    2    1    1    1    2    1    1    3</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    1    2    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    4    3    1    4    4    4    1    3    3    3    4    3    1    4    4</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   d430 d450 d455 d470 d475 d510 d540 d570 d620 d640 d650 d660 d720 d760 d770</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2    1    3    1    2    1    1    1    2    1    1    1    1    1    1</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    4    4    4    4    1    3    3    4    4    4    4    4    4    4    1</span></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    2    1    3    1    2    1    1    1    1    1    1    1    1    1    1</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    3    4    3    1    1    1    1    1    1    2    1    1    1    1    1</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    4    2    4    2    4    2    2    2    2    4    3    1    2    1    4</span></span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   d845 d850 d855 d910 d920 e1101 e310 e325 e355 e410 e420 e425 e430 e450 e455</span></span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    1    1    1    1    2     5    5    5    9    5    5    5    5    9    5</span></span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    1    1    3    3    3     7    8    7    8    8    8    8    8    8    8</span></span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1    1    1    1    2     5    5    5    9    5    5    5    5    9    5</span></span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    1    1    1    1    1     5    7    6    7    5    4    4    5    7    7</span></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    1    1    1    1    1     5    6    5    6    5    5    5    5    6    5</span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    3    3    1    1    3     8    8    8    8    8    7    6    4    7    7</span></span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   e460 e465 e570 e575 e580 e590 s770</span></span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    5    5    8    8    9    8    1</span></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    7    7    7    7    7    7    3</span></span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    5    5    8    8    9    5    1</span></span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    4    5    5    7    7    6    2</span></span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    5    5    5    5    5    5    1</span></span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    3    3    6    6    6    6    2</span></span></code></pre></div>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b1602 b122 b126 b130 b134 b140 b147 b152 b164 b180 b260 b265 b270 b280 b430 b455 b640 b710 b730</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     1    2    3    2    2    1    1    3    1    1    1    1    1    2    1    2    1    1    2</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     4    3    3    4    4    3    4    4    4    2    3    3    3    3    1    4    1    3    4</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     1    2    3    2    2    1    2    3    1    1    1    1    1    2    1    2    1    1    2</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     1    1    1    3    2    1    1    1    1    1    1    1    1    4    1    4    1    1    1</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    2    1    1</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7     1    2    1    3    4    4    3    4    3    3    1    1    4    4    1    4    3    1    4</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   b735 b740 b760 b780 d160 d175 d220 d230 d240 d410 d415 d430 d450 d455 d470 d475 d510 d540 d570</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    1    1    1    2    1    1    2    1    2    1    1    2    1    3    1    2    1    1    1</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    4    4    4    4    4    3    4    4    4    4    4    4    4    4    4    1    3    3    4</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1    2    1    2    1    1    1    2    2    1    1    2    1    3    1    2    1    1    1</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    1    4    1    2    1    1    1    2    1    1    3    3    4    3    1    1    1    1    1</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    4    4    1    3    3    3    4    3    1    4    4    4    2    4    2    4    2    2    2</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   d620 d640 d650 d660 d720 d760 d770 d845 d850 d855 d910 d920 e1101 e310 e325 e355 e410 e420 e425</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2    1    1    1    1    1    1    1    1    1    1    2     5    5    5    9    5    5    5</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    4    4    4    4    4    4    1    1    1    3    3    3     7    8    7    8    8    8    8</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1    1    1    1    1    1    1    1    1    1    1    2     5    5    5    9    5    5    5</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    1    2    1    1    1    1    1    1    1    1    1    1     5    7    6    7    5    4    4</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    1    1    1    1    1    1    1    1    1    1    1    1     5    6    5    6    5    5    5</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    2    4    3    1    2    1    4    3    3    1    1    3     8    8    8    8    8    7    6</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   e430 e450 e455 e460 e465 e570 e575 e580 e590 s770</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    5    9    5    5    5    8    8    9    8    1</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    8    8    8    7    7    7    7    7    7    3</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    5    9    5    5    5    8    8    9    5    1</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    5    7    7    4    5    5    7    7    6    2</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    5    6    5    5    5    5    5    5    5    1</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7    4    7    7    3    3    6    6    6    6    2</span></span></code></pre></div>
 <p>We can check whether all categories are observed at least once as follows:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="fu">apply</span>(x, <span class="dv">2</span>, min), <span class="fu">apply</span>(x, <span class="dv">2</span>, max))</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      b1602 b122 b126 b130 b134 b140 b147 b152 b164 b180 b260 b265 b270 b280</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]     1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]     4    5    4    5    5    5    5    5    5    4    4    5    5    5</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      b430 b455 b640 b710 b730 b735 b740 b760 b780 d160 d175 d220 d230 d240 d410</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    4    5    5    5    5    5    5    4    5    4    5    5    5    5    5</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      d415 d430 d450 d455 d470 d475 d510 d540 d570 d620 d640 d650 d660 d720 d760</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    4    5    4    5    5    5    4    4    4    5    5    5    5    4    5</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      d770 d845 d850 d855 d910 d920 e1101 e310 e325 e355 e410 e420 e425 e430</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    1    1    1    1    1     2    1    1    2    1    1    1    1</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    5    5    5    5    5    5     9    9    9    9    9    9    9    9</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      e450 e455 e460 e465 e570 e575 e580 e590 s770</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    2    1    1    1    1    1    1    1</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    9    9    9    9    9    9    9    9    5</span></span></code></pre></div>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      b1602 b122 b126 b130 b134 b140 b147 b152 b164 b180 b260 b265 b270 b280 b430 b455 b640 b710 b730</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]     1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]     4    5    4    5    5    5    5    5    5    4    4    5    5    5    4    5    5    5    5</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      b735 b740 b760 b780 d160 d175 d220 d230 d240 d410 d415 d430 d450 d455 d470 d475 d510 d540 d570</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    5    5    4    5    4    5    5    5    5    5    4    5    4    5    5    5    4    4    4</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      d620 d640 d650 d660 d720 d760 d770 d845 d850 d855 d910 d920 e1101 e310 e325 e355 e410 e420 e425</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    1    1    1    1    1    1    1    1    1    1    1     2    1    1    2    1    1    1</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    5    5    5    5    4    5    5    5    5    5    5    5     9    9    9    9    9    9    9</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      e430 e450 e455 e460 e465 e570 e575 e580 e590 s770</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    1    1    2    1    1    1    1    1    1    1</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    9    9    9    9    9    9    9    9    9    5</span></span></code></pre></div>
 <p>As for some covariates not all possible levels are observed at least once, the easiest way is to add a corresponding row to x with corresponding y value being <code>NA</code> to ensure a corresponding coefficient is to be fitted.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x, <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">67</span>))</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x, <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">50</span>), <span class="fu">rep</span>(<span class="dv">9</span>,<span class="dv">16</span>), <span class="dv">5</span>))</span>
@@ -560,16 +543,16 @@ For one-factorial ANOVA, the (exact) finite sample distribution is derived by Cr
 <p>For deriving p-values, we simulate 1,000,000 values from the null distribution of RLRT:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ordAOV</span>(x, y, <span class="at">type =</span> <span class="st">&quot;RLRT&quot;</span>, <span class="at">nsim =</span> <span class="dv">1000000</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  simulated finite sample distribution of RLRT.  (p-value based on</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1000000 simulated values)</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  simulated finite sample distribution of RLRT.  (p-value based on 1000000 simulated</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  values)</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  </span></span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; RLRT = 72.721, p-value &lt; 2.2e-16</span></span></code></pre></div>
 <p>For comparison:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ordAOV</span>(x, y, <span class="at">type =</span> <span class="st">&quot;LRT&quot;</span>, <span class="at">nsim =</span> <span class="dv">1000000</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  simulated finite sample distribution of LRT.  (p-value based on</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1000000 simulated values)</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  simulated finite sample distribution of LRT.  (p-value based on 1000000 simulated</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  values)</span></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  </span></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; LRT = 71.502, p-value &lt; 2.2e-16</span></span>
@@ -648,7 +631,7 @@ The null distribution of (R)LRT is obtained by simulation (one million values by
 <li><p>Crainiceanu, C. M. and D. Ruppert (2004). Likelihood ratio test in linear mixed models with one variance component. <em>Journal of the Royal Statistical Society B 66</em>, 165–185.</p></li>
 <li><p>Gertheiss, J. (2014). ANOVA for factors with ordered levels. <em>Journal of Agricultural, Biological and Environmental Statistics 19</em>, 258-277.</p></li>
 <li><p>Gertheiss, J. and F. Oehrlein (2011). Testing relevance and linearity of ordinal predictors. <em>Electronic Journal of Statistics 5</em>, 1935-1959.</p></li>
-<li><p>Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2022). Statistical inference for ordinal predictors in generalized linear and additive models with application to bronchopulmonary dysplasia. <em>BMC research notes 15</em>, 112.</p></li>
+<li><p>Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2022). Statistical inference for ordinal predictors in generalized linear and additive models with application to bronchopulmonary dysplasia. <em>BMC research notes 15<em>, 112.</p></li>
 <li><p>Greven, S., C. Crainiceanu, H. Kuechenhoff, and A. Peters (2008). Restricted likelihood ratio testing for zero variance components in linear mixed models. <em>Journal of Computational and Graphical Statistics 17</em>, 870-891.</p></li>
 <li><p>Meier, L., S. van de Geer and P. Buehlmann (2008). The group lasso for logistic regression. <em>Journal of the Royal Statistical Society B 70</em>, 53-71.</p></li>
 <li><p>Scheipl, F., Greven, S. and Kuechenhoff, H (2008). Size and power of tests for a zero random effect variance or polynomial regression in additive and linear mixed models. <em>Computational Statistics &amp; Data Analysis 52</em>(7), 3283-3299.</p></li>
@@ -677,3 +660,4 @@ The null distribution of (R)LRT is obtained by simulation (one million values by
 
 </body>
 </html>
+

@@ -20,11 +20,20 @@ For smoothing, selection and fusion, details may be found in Tutz and
 Gertheiss (2014, 2016). All functions are documented in detail in
 `vignette("ordPens", package = "ordPens")`. For smoothing only, the
 package also builds a bridge to `mgcv::gam()`, see Gertheiss et
-al. (2021) for further information.
+al. (2022) for further information.
 
 For the function implementing nonlinear principal components analysis,
 `ordPCA`, details can be found in Hoshiyar et al. (2021) and
 `vignette("ordPCA", package = "ordPens")`.
+
+Version 1.1.0 is a minor release with new functions:
+
+-   Functions `ordSelect`, `ordFusion` updated/extended to cumulative
+    logit model models.
+-   Function `ordCV` added, provides cross-validation for penalized
+    regression models with ordinal predictors.  
+-   Function `StabilityCumu` added, provides stability selection for
+    penalized cumulative logit models.
 
 Version 1.0.0 is a major release with new functions:
 
@@ -39,21 +48,68 @@ Version 1.0.0 is a major release with new functions:
     `ordSmooth()`. Additionally, generic functions for prediction and
     plotting are provided.
 
+## Installation & getting started
+
+For standard use, install `ordPens` from
+[CRAN](https://cran.r-project.org/package=ordPens):
+
+``` r
+install.packages("ordPens")
+```
+
+The development version of the package may be installed from GitHub:
+
+``` r
+devtools::install_git("https://github.com/ahoshiyar/ordPens", build_vignettes = TRUE)
+```
+
+For a detailed overview about the functionalities and given examples
+type:
+
+``` r
+library(ordPens)
+vignette("ordPens", package = "ordPens")
+vignette("ordPCA", package = "ordPens")
+```
+
+## Issues
+
+If you encounter any bugs or have any specific feature requests, please
+[file an issue](https://github.com/ahoshiyar/ordPens/issues).
+
+## Contributions & Code of conduct
+
+Contributions are very welcome. Interested contributors should consult
+the [contribution
+guidelines](https://github.com/ahoshiyar/ordPens/blob/master/Contributing.md)
+prior to submitting a pull request.
+
+Please note that the `ordPens` package is released with a [Contributor
+Code of
+Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/).
+By contributing to this project, you agree to abide by its terms.
+
 ## References
 
 -   Gertheiss, J. (2014). ANOVA for factors with ordered levels.
     *Journal of Agricultural, Biological and Environmental Statistics
     19*, 258-277.
 
--   Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2021).
+-   Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2022).
     Statistical inference for ordinal predictors in generalized linear
     and additive models with application to bronchopulmonary dysplasia.
-    Preprint, available from <https://arxiv.org/abs/2102.01946>.
+    *BMC research notes 15*, 112.
 
 -   Hoshiyar, A., H.A.L. Kiers, and J. Gertheiss (2021). Penalized
     non-linear principal components analysis for ordinal variables with
     an application to international classification of functioning core
-    sets, Preprint.
+    sets. *British Journal of Mathematical and Statistical Psychology
+    76*, 353-371.
+
+-   Hoshiyar, A., Gertheiss, L.H., and Gertheiss, J. (2023).
+    Regularization and model selection for item-on-items regression with
+    applications to food products’ survey data. Preprint, available from
+    <https://arxiv.org/abs/2309.16373>.
 
 -   Sweeney, E., C. Crainiceanu, and J. Gertheiss (2015). Testing
     differentially expressed genes in dose-response studies and with

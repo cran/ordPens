@@ -19,7 +19,7 @@ H <- ehd + 1
 head(H)
 
 ## -----------------------------------------------------------------------------
-ehd_pca1 <- ordPCA(H, p = 5, lambda = 0.5, maxit = 100, crit = 1e-7,
+ehd_pca1 <- ordPCA(H, p = 2, lambda = 0.5, maxit = 100, crit = 1e-7,
                    qstart = NULL, Ks = apply(H, 2, max), constr = rep(TRUE, ncol(H)),
                    CV = FALSE, k = 5, CVfit = FALSE)
 
@@ -30,11 +30,11 @@ summary(ehd_pca1$pca)
 ehd_pca1$qs
 
 ## ---- fig.align="center"------------------------------------------------------
-plot(1:5, ehd_pca1$qs[[2]], type = "b", xlab = "category", ylab = "quantification", 
-     col = 2, main = colnames(H)[2], bty = "n")
+plot(1:5, ehd_pca1$qs[[9]], type = "b", xlab = "category", ylab = "quantification", 
+     col = 2, main = colnames(H)[9], bty = "n")
 
 ## -----------------------------------------------------------------------------
-ehd_pca2 <- ordPCA(H, p = 5, lambda = c(5, 0.5, 0), maxit = 100, crit = 1e-7,
+ehd_pca2 <- ordPCA(H, p = 2, lambda = c(5, 0.5, 0), maxit = 100, crit = 1e-7,
                    qstart = NULL, Ks = apply(H, 2, max), constr = rep(TRUE, ncol(H)),
                    CV = FALSE)
 
@@ -42,13 +42,13 @@ ehd_pca2 <- ordPCA(H, p = 5, lambda = c(5, 0.5, 0), maxit = 100, crit = 1e-7,
 summary(ehd_pca2$pca[[1]])
 
 ## -----------------------------------------------------------------------------
-ehd_pca2$qs[[2]]
+ehd_pca2$qs[[9]]
 
 ## ---- fig.align="center"------------------------------------------------------
-plot(ehd_pca2$qs[[2]][,3], type = "b", xlab = "category", ylab = "quantification", col = 1, 
-     ylim = range(ehd_pca2$qs[[2]]), main = colnames(H)[2], bty = "n")
-lines(ehd_pca2$qs[[2]][,2], type = "b", col = 2, lty = 2, pch = 2, lwd=2)
-lines(ehd_pca2$qs[[2]][,1], type = "b", col = 3, lty = 3, pch = 3, lwd=2)
+plot(ehd_pca2$qs[[9]][,3], type = "b", xlab = "category", ylab = "quantification", col = 1, 
+     ylim = range(ehd_pca2$qs[[9]]), main = colnames(H)[9], bty = "n")
+lines(ehd_pca2$qs[[9]][,2], type = "b", col = 2, lty = 2, pch = 2, lwd=2)
+lines(ehd_pca2$qs[[9]][,1], type = "b", col = 3, lty = 3, pch = 3, lwd=2)
 
 ## ----test_a, figures-side, fig.show="hold", fig.width = 3, fig.height = 3, out.width="31%",out.height="30%"----
 par(mar = c(4.1, 4.1, 3.1, 1.1))
@@ -61,7 +61,7 @@ for(j in c(1, 9, 12, 13, 15, 19)){
 } 
 
 ## -----------------------------------------------------------------------------
-ehd_pca3 <- ordPCA(H, p = 5, lambda = c(5, 0.5, 0.001), maxit = 100, crit = 1e-7,
+ehd_pca3 <- ordPCA(H, p = 2, lambda = c(5, 0.5, 0.001), maxit = 100, crit = 1e-7,
                    qstart = NULL, Ks = apply(H, 2, max), constr = rep(TRUE, ncol(H)),
                    CV = TRUE, k = 5)
 
@@ -70,20 +70,67 @@ ehd_pca3$VAFtest
 ## -----------------------------------------------------------------------------
 lambda <- 10^seq(4, -4, by = -0.1)
 set.seed(456)
-ehd_pca4 <- ordPCA(H, p = 5, lambda = lambda, maxit = 100, crit = 1e-7,
-                   qstart = NULL, Ks = apply(H, 2, max), constr = rep(TRUE, ncol(H)),
-                   CV = TRUE, k = 5, CVfit = FALSE)
+ehd_CV_p2 <- ordPCA(H, p = 2, lambda = lambda, maxit = 100, crit = 1e-7, Ks = apply(H, 2, max),
+                   qstart = NULL, constr = rep(TRUE, ncol(H)), CV = TRUE, k = 5, CVfit = FALSE)
 
-ehd_pca4$VAFtest
+lam_p2 <- (lambda)[which.max(apply(ehd_CV_p2$VAFtest,2,mean))]
+ehd_CV_p2$VAFtest
 
 ## ----test, figures-side, fig.show="hold", fig.width = 5, fig.height = 5, out.width="45%",out.height="50%"----
-plot(log10(lambda), apply(ehd_pca4$VAFtrain,2,mean), type = "l",
+plot(log10(lambda), apply(ehd_CV_p2$VAFtrain,2,mean), type = "l",
      xlab = expression(log[10](lambda)), ylab = "proportion of variance explained",
      main = "training data", cex.axis = 1.2, cex.lab = 1.2, cex.main = 1.4)
-plot(log10(lambda), apply(ehd_pca4$VAFtest,2,mean), type = "l",
+plot(log10(lambda), apply(ehd_CV_p2$VAFtest,2,mean), type = "l",
      xlab = expression(log[10](lambda)), ylab = "proportion of variance explained",
      main = "validation data", cex.axis = 1.2, cex.lab = 1.2, cex.main = 1.4)
-abline(v = log10(lambda)[which.max(apply(ehd_pca4$VAFtest,2,mean))])
+abline(v = log10(lambda)[which.max(apply(ehd_CV_p2$VAFtest,2,mean))])
+
+
+## ---- fig.align="center"------------------------------------------------------
+# evaluate model with optimal lambda for p=2
+ehd_pca_p2 <- ordPCA(H, p=2, lambda = lam_p2, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+
+# evaluate optimal lambda & model for p=1, p=3, p=4
+set.seed(456)
+ehd_CV_p1 <- ordPCA(H, p = 1, lambda=lambda, constr = rep(TRUE, ncol(H)), CV = TRUE, k = 5)
+ehd_CV_p3 <- ordPCA(H, p = 3, lambda=lambda, constr = rep(TRUE, ncol(H)), CV = TRUE, k = 5)
+ehd_CV_p4 <- ordPCA(H, p = 4, lambda=lambda, constr = rep(TRUE, ncol(H)), CV = TRUE, k = 5)
+
+lam_p1 <- (lambda)[which.max(apply(ehd_CV_p1$VAFtest,2,mean))]
+lam_p3 <- (lambda)[which.max(apply(ehd_CV_p3$VAFtest,2,mean))]
+lam_p4 <- (lambda)[which.max(apply(ehd_CV_p4$VAFtest,2,mean))]
+
+ehd_pca_p1 <- ordPCA(H, p=3, lambda=lam_p1, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+ehd_pca_p3 <- ordPCA(H, p=3, lambda=lam_p1, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+ehd_pca_p4 <- ordPCA(H, p=4, lambda=lam_p1, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+
+
+## ---- fig.align="center"------------------------------------------------------
+# evaluate model with optimal lambda for p=2
+ehd_pca_p2 <- ordPCA(H, p=2, lambda = lam_p2, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+
+# evaluate optimal lambda & model for p=1, p=3, p=4
+set.seed(456)
+ehd_CV_p1 <- ordPCA(H, p = 1, lambda=lambda, constr = rep(TRUE, ncol(H)), CV = TRUE, k = 5)
+ehd_CV_p3 <- ordPCA(H, p = 3, lambda=lambda, constr = rep(TRUE, ncol(H)), CV = TRUE, k = 5)
+ehd_CV_p4 <- ordPCA(H, p = 4, lambda=lambda, constr = rep(TRUE, ncol(H)), CV = TRUE, k = 5)
+
+lam_p1 <- (lambda)[which.max(apply(ehd_CV_p1$VAFtest,2,mean))]
+lam_p3 <- (lambda)[which.max(apply(ehd_CV_p3$VAFtest,2,mean))]
+lam_p4 <- (lambda)[which.max(apply(ehd_CV_p4$VAFtest,2,mean))]
+
+ehd_pca_p1 <- ordPCA(H, p=3, lambda=lam_p1, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+ehd_pca_p3 <- ordPCA(H, p=3, lambda=lam_p1, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+ehd_pca_p4 <- ordPCA(H, p=4, lambda=lam_p1, Ks=apply(H,2,max), constr=rep(TRUE,ncol(H)))
+ 
+plot(ehd_pca_p1$pca$sdev[1:10]^2, bty="n",  xaxt="n", type="o", main=NULL, xlab="", pch=19,
+     ylab="Variances", ylim=range(c(ehd_pca_p1$pca$sdev^2, prcomp(H, scale=T)$sdev^2)), col=6)
+lines(1:10, ehd_pca_p2$pca$sdev[1:10]^2, col = 2, type = "o", pch = 19)
+lines(1:10, ehd_pca_p3$pca$sdev[1:10]^2, col = 3, type = "o", pch = 19)
+lines(1:10, ehd_pca_p4$pca$sdev[1:10]^2, col = 4, type = "o", pch = 19)
+lines(1:10, prcomp(H, scale = T)$sdev[1:10]^2, col = 1, type = "o", pch = 19)
+legend(8, 5, legend=c("p=1","p=2","p=3","p=4","std"), col=c(6,2:4,1), lty=1, bty="n")
+axis(1, at = 1:10, labels = 1:10)  
 
 ## -----------------------------------------------------------------------------
 data(ICFCoreSetCWP) 

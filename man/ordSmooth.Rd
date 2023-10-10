@@ -6,8 +6,9 @@ with the sum of squared differences of adjacent dummy coefficients being penaliz
 
 \usage{
 ordSmooth(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), lambda, 
-  model = c("linear", "logit", "poisson"), penscale = identity, scalex = TRUE, 
-  nonpenx = NULL, eps = 1e-3, delta = 1e-6, maxit = 25, ...)
+  model = c("linear", "logit", "poisson"), restriction = c("refcat", "effect"),
+  penscale = identity, scalex = TRUE, nonpenx = NULL, eps = 1e-3, delta = 1e-6, 
+  maxit = 25, ...)
 }
 \arguments{
   \item{x}{the matrix (or \code{data.frame}) of ordinal predictors, with each 
@@ -27,6 +28,7 @@ ordSmooth(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), lambda,
     Optimization starts with the first component. See details below.}
   \item{model}{the model which is to be fitted. Possible choices are "linear"
     (default), "logit" or "poisson". See details below.}
+   \item{restriction}{identifiability restriction for dummy coding. "reference" takes category 1 is as reference category (default), while with "effect" dummy coefficients sum up to 0 (known as effect coding).}
   \item{penscale}{rescaling function to adjust the value of the penalty
     parameter to the degrees of freedom of the parameter group.}
   \item{scalex}{logical. Should (split-coded) design matrix corresponding to \code{x} be scaled to have unit variance over columns before fitting? See details below.}
@@ -81,6 +83,7 @@ ordSmooth(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), lambda,
     reference category) as well as metric predictors. Columns correspond to 
     different lambda values.}
   \item{model}{the type of the fitted model: "linear", "logit", or "poisson".}
+  \item{restriction}{the type of restriction used for identifiability.}
   \item{lambda}{the used lambda values.}
   \item{fraction}{the used fraction values (\code{NULL} in case of \code{ordSmooth}).}
   \item{xlevels}{a vector giving the number of levels of the ordinal predictors.}
@@ -88,9 +91,9 @@ ordSmooth(x, y, u = NULL, z = NULL, offset = rep(0,length(y)), lambda,
   \item{zcovars}{the number of metric covariates (if any).}
 }
 \references{
-Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2021). \emph{Statistical 
+Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2022). \emph{Statistical 
 inference for ordinal predictors in generalized linear and additive models with
-application to bronchopulmonary dysplasia}. Preprint, available from https://arxiv.org/abs/2102.01946. 
+application to bronchopulmonary dysplasia}. BMC research notes, 15, 112.
 
 Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
 predictors}. International Statistical Review, 77, 345-365.
@@ -101,7 +104,7 @@ Tutz, G. and J. Gertheiss (2014). \emph{Rating scales as predictors -- the old
 Tutz, G. and J. Gertheiss (2016). \emph{Regularized regression for categorical data}. Statistical Modelling, 16, 161-200. 
 }
 
-\author{Jan Gertheiss}
+\author{Jan Gertheiss, Aisouda Hoshiyar}
 
 \seealso{\code{\link{plot.ordPen}}, \code{\link{predict.ordPen}}}
 
@@ -170,3 +173,4 @@ plot(gom2)
 
 \keyword{models}
 \keyword{regression}
+

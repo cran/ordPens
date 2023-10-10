@@ -1,4 +1,15 @@
 
+# ordPens 1.1.0
+
+Minor revision with added functionality.
+
+-   Functions `ordSelect`, `ordFusion` updated/extended to cumulative
+    logit model models.
+-   Function `ordCV` added, provides cross-validation for penalized
+    regression models with ordinal predictors.
+-   Function `StabilityCumu` added, provides stability selection for
+    penalized cumulative logit models.
+
 # ordPens 1.0.0
 
 Major revision with added functionality.

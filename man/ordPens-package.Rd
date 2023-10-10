@@ -14,9 +14,10 @@ a group lasso or generalized ridge penalty. Nonlinear principal components analy
 \tabular{ll}{
 Package: \tab ordPens\cr
 Type: \tab Package\cr
-Version: \tab 1.0.0\cr
-Date: \tab 2021-08-17\cr
+Version: \tab 1.1.0\cr
+Date: \tab 2023-07-10\cr
 Depends: \tab grplasso, mgcv, RLRsim, quadprog, glmpath\cr
+Imports: \tab ordinalNet\cr
 Suggests: \tab psy\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
@@ -49,9 +50,9 @@ Journal of the Royal Statistical Society C (Applied Statistics), 60, 377-395.
 Gertheiss, J. and F. Oehrlein (2011). \emph{Testing relevance and linearity of
 ordinal predictors}, Electronic Journal of Statistics, 5, 1935-1959.
 
-Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2021). \emph{Statistical 
+Gertheiss, J., F. Scheipl, T. Lauer, and H. Ehrhardt (2022). \emph{Statistical 
 inference for ordinal predictors in generalized linear and additive models with
-application to bronchopulmonary dysplasia}. Preprint, available from https://arxiv.org/abs/2102.01946. 
+application to bronchopulmonary dysplasia}. BMC research notes, 15, 112.
 
 Gertheiss, J. and G. Tutz (2009). \emph{Penalized regression with ordinal 
 predictors}. International Statistical Review, 77, 345-365.
@@ -59,9 +60,9 @@ predictors}. International Statistical Review, 77, 345-365.
 Gertheiss, J. and G. Tutz (2010). \emph{Sparse modeling of categorial explanatory
 variables}. The Annals of Applied Statistics, 4, 2150-2180.
 
-Hoshiyar, A. (2020). \emph{Analyzing Likert-type data using penalized non-linear principal components analysis}, in: Proceedings of the 35th International Workshop on Statistical Modelling, Vol. I, 337-340.
+Hoshiyar, A., H.A.L. Kiers, and J. Gertheiss (2021). \emph{Penalized non-linear principal components analysis for ordinal variables with an application to international classification of functioning core sets},  British Journal of Mathematical and Statistical Psychology, 76, 353-371.
 
-Hoshiyar, A., H.A.L. Kiers, and J. Gertheiss (2021). \emph{Penalized non-linear principal components analysis for ordinal variables with an application to international classification of functioning core sets}, Preprint.
+Hoshiyar, A., Gertheiss, L.H., and Gertheiss, J. (2023). \emph{Regularization and    Model Selection for Item-on-Items Regression with Applications to Food Products' Survey Data.} Preprint, available from https://arxiv.org/abs/2309.16373.
 
 Tutz, G. and J. Gertheiss (2014). \emph{Rating scales as predictors -- the old
 question of scale level and some answers}. Psychometrica, 79, 357-376.
@@ -135,3 +136,4 @@ cvResult1 <- ordPCA(H, p = 2, lambda = lambda, maxit = 100,
 lambda[which.max(apply(cvResult1$VAFtest,2,mean))]                      
 }
 }
+
